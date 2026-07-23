@@ -1,0 +1,23 @@
+plugins {
+    // see https://fabricmc.net/develop/ for new versions
+    id 'net.fabricmc.fabric-loom' version '1.15.5' apply false
+    // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
+    id 'net.neoforged.moddev' version '2.0.141' apply false
+}
+
+version = mod_version
+
+// Collect both platform JARs into a single distribution zip
+tasks.register('distZip', Zip) {
+    group = 'distribution'
+    description = 'Packs Fabric and NeoForge JARs into one zip for distribution'
+    archiveFileName = "${mod_id}-${mod_version}.zip"
+    destinationDirectory = layout.buildDirectory.dir('dist')
+
+    from(project(':fabric').tasks.named('jar')) {
+        into 'fabric'
+    }
+    from(project(':neoforge').tasks.named('jar')) {
+        into 'neoforge'
+    }
+}

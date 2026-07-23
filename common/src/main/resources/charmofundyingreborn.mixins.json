@@ -1,0 +1,14 @@
+{
+    "required": true,
+    "package": "com.fragmentedchaos.charmofundyingreborn.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "refmap": "charmofundyingreborn.refmap.json",
+    "mixins": [
+        "CharmSlotTotemMixin"
+    ],
+    "client": [],
+    "server": [],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
