@@ -50,4 +50,4 @@
 
 ## 📄 许可证
 
-MIT License © 2026 Fragmented_Chaos
+MIT License © 2026 Rending_Void
