@@ -1,7 +1,7 @@
 package com.fragmentedchaos.charmofundyingreborn.platform;
 
 import com.fragmentedchaos.charmofundyingreborn.Constants;
-import com.fragmentedchaos.charmofundyingreborn.TotemHelper;
+import com.fragmentedchaos.charmofundyingreborn.common.TotemHelper;
 import com.fragmentedchaos.charmofundyingreborn.platform.services.ICharmSlotHelper;
 import eu.pb4.trinkets.api.TrinketInventory;
 import eu.pb4.trinkets.api.TrinketsApi;

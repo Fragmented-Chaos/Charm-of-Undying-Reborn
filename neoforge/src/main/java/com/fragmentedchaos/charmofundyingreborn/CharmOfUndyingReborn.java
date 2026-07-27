@@ -1,5 +1,7 @@
 package com.fragmentedchaos.charmofundyingreborn;
 
+import com.fragmentedchaos.charmofundyingreborn.common.ModConfig;
+import com.fragmentedchaos.charmofundyingreborn.platform.NeoForgeNetworkHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -23,6 +25,7 @@ public class CharmOfUndyingReborn {
 
         CharmOfUndyingRebornCommon.init();
         eventBus.addListener(this::registerCuriosCapabilities);
+        eventBus.addListener(NeoForgeNetworkHelper::onRegisterPayloads);
         ChorCommand.register();
 
         Constants.LOG.info("{} successfully initialized on NeoForge", Constants.MOD_NAME);

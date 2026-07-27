@@ -1,4 +1,5 @@
-package com.fragmentedchaos.charmofundyingreborn;
+package com.fragmentedchaos.charmofundyingreborn.common;
+import com.fragmentedchaos.charmofundyingreborn.Constants;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

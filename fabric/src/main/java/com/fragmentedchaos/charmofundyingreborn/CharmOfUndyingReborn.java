@@ -1,5 +1,6 @@
 package com.fragmentedchaos.charmofundyingreborn;
 
+import com.fragmentedchaos.charmofundyingreborn.common.TotemHelper;
 import dev.yumi.commons.TriState;
 import eu.pb4.trinkets.api.event.TrinketSlotCompatibilityCallback;
 import net.fabricmc.api.ModInitializer;

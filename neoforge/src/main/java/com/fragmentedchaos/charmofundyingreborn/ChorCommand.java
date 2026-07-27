@@ -1,5 +1,7 @@
 package com.fragmentedchaos.charmofundyingreborn;
 
+import com.fragmentedchaos.charmofundyingreborn.common.ModConfig;
+import com.fragmentedchaos.charmofundyingreborn.common.TotemHelper;
 import com.fragmentedchaos.charmofundyingreborn.platform.CharmSlotServices;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;

@@ -1,6 +1,6 @@
 package com.fragmentedchaos.charmofundyingreborn.platform;
 
-import com.fragmentedchaos.charmofundyingreborn.TotemHelper;
+import com.fragmentedchaos.charmofundyingreborn.common.TotemHelper;
 import com.fragmentedchaos.charmofundyingreborn.platform.services.ICharmSlotHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

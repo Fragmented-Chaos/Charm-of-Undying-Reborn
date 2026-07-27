@@ -2,6 +2,7 @@ package com.fragmentedchaos.charmofundyingreborn.platform;
 
 import com.fragmentedchaos.charmofundyingreborn.Constants;
 import com.fragmentedchaos.charmofundyingreborn.platform.services.ICharmSlotHelper;
+import com.fragmentedchaos.charmofundyingreborn.platform.services.INetworkHelper;
 
 import java.util.ServiceLoader;
 
@@ -14,6 +15,7 @@ public final class CharmSlotServices {
      * The loaded platform-specific charm slot helper implementation.
      */
     public static final ICharmSlotHelper CHARM_SLOT = load(ICharmSlotHelper.class);
+    public static final INetworkHelper NETWORK = load(INetworkHelper.class);
 
     private CharmSlotServices() {
         throw new UnsupportedOperationException("CharmSlotServices cannot be instantiated");

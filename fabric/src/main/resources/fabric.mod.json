@@ -18,6 +18,9 @@
     "entrypoints": {
         "main": [
             "com.fragmentedchaos.charmofundyingreborn.CharmOfUndyingReborn"
+        ],
+        "client": [
+            "com.fragmentedchaos.charmofundyingreborn.FabricClientSetup"
         ]
     },
     "mixins": [

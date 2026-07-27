@@ -1,6 +1,6 @@
 package com.fragmentedchaos.charmofundyingreborn.mixin;
 
-import com.fragmentedchaos.charmofundyingreborn.DeathEventHandler;
+import com.fragmentedchaos.charmofundyingreborn.common.DeathEventHandler;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
