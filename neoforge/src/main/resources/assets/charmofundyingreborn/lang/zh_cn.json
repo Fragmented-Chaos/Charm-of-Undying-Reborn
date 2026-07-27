@@ -1,0 +1,12 @@
+{
+  "curios.identifier.charm": "护符",
+
+  "commands.charmofundyingreborn.reload.success": "§a配置重载成功！",
+  "commands.charmofundyingreborn.reload.failure": "§c配置重载失败，请查看日志获取详细信息。",
+
+  "commands.charmofundyingreborn.check.found": "§a玩家 %s 的护符槽中有不死图腾：%s",
+  "commands.charmofundyingreborn.check.not_found": "§e玩家 %s 的护符槽中没有不死图腾。",
+  "commands.charmofundyingreborn.check.empty": "§7玩家 %s 的护符槽是空的。",
+  "commands.charmofundyingreborn.check.self": "§7你的护符槽中没有不死图腾。",
+  "commands.charmofundyingreborn.check.self_found": "§a你的护符槽中有不死图腾：%s"
+}

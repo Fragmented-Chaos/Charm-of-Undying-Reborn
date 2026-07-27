@@ -1,0 +1,13 @@
+{
+  "curios.identifier.charm": "Charm",
+  "trinkets.slot.chest.charm": "Charm",
+
+  "commands.charmofundyingreborn.reload.success": "§aConfiguration reloaded successfully!",
+  "commands.charmofundyingreborn.reload.failure": "§cFailed to reload configuration. Check the log for details.",
+
+  "commands.charmofundyingreborn.check.found": "§aPlayer %s has a totem in their charm slot: %s",
+  "commands.charmofundyingreborn.check.not_found": "§ePlayer %s does not have a totem in their charm slot.",
+  "commands.charmofundyingreborn.check.empty": "§7Player %s has an empty charm slot.",
+  "commands.charmofundyingreborn.check.self": "§7You have no totem in your charm slot.",
+  "commands.charmofundyingreborn.check.self_found": "§aYou have a totem in your charm slot: %s"
+}
