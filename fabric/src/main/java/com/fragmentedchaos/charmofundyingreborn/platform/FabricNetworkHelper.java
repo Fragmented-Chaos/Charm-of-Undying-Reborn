@@ -22,8 +22,13 @@ public class FabricNetworkHelper implements INetworkHelper {
     }
 
     @Override
-    public void registerClientHandler() {
+    public void registerPayloadType() {
+        // Required on both server (to send) and client (to receive)
         PayloadTypeRegistry.clientboundPlay().register(TotemUsePayload.TYPE, TotemUsePayload.STREAM_CODEC);
+    }
+
+    @Override
+    public void registerClientHandler() {
         ClientPlayNetworking.registerGlobalReceiver(TotemUsePayload.TYPE,
                 (payload, ctx) -> ctx.client().execute(() ->
                         ClientTotemHandler.handle(payload)));

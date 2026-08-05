@@ -1,9 +1,5 @@
 # Charm of Undying: Reborn
 
-[![Mod Loader](https://img.shields.io/badge/Fabric-26.1.x-blue)](https://fabricmc.net/)
-[![Mod Loader](https://img.shields.io/badge/NeoForge-26.1.x-orange)](https://neoforged.net/)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-
 将不死图腾放入护符饰品槽，死亡时自动触发原版复活效果。无需手持——图腾在饰品栏中即可生效。
 
 ## ✨ 功能

@@ -24,7 +24,7 @@
         ]
     },
     "mixins": [
-        "${mod_id}.mixins.json"
+        "charmofundyingreborn.mixins.json"
     ],
     "depends": {
         "fabricloader": ">=${fabric_loader_version}",

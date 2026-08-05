@@ -13,8 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Configuration manager for custom totem item IDs.
@@ -27,7 +27,7 @@ public final class ModConfig {
     private static final String CONFIG_DIR = "config/charmofundyingreborn";
     private static final String CONFIG_FILE = "custom_totems.json";
 
-    private static final Set<Identifier> customTotems = new HashSet<>();
+    private static final Set<Identifier> customTotems = new CopyOnWriteArraySet<>();
 
     private ModConfig() {
         throw new UnsupportedOperationException("ModConfig class cannot be instantiated");
@@ -49,7 +49,7 @@ public final class ModConfig {
 
         try (Reader reader = Files.newBufferedReader(configPath)) {
             Set<String> ids = GSON.fromJson(reader,
-                    new TypeToken<HashSet<String>>() {}.getType());
+                    new TypeToken<Set<String>>() {}.getType());
 
             if (ids != null) {
                 for (String id : ids) {
@@ -98,7 +98,7 @@ public final class ModConfig {
             Files.createDirectories(configPath.getParent());
 
             // Default: include vanilla totem as example
-            Set<String> defaults = new HashSet<>();
+            Set<String> defaults = new java.util.HashSet<>();
             defaults.add("minecraft:totem_of_undying");
 
             try (Writer writer = Files.newBufferedWriter(configPath)) {

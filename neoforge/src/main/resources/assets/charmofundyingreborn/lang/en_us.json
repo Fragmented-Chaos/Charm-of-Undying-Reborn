@@ -1,6 +1,4 @@
 {
-  "curios.identifier.charm": "Charm",
-
   "commands.charmofundyingreborn.reload.success": "§aConfiguration reloaded successfully!",
   "commands.charmofundyingreborn.reload.failure": "§cFailed to reload configuration. Check the log for details.",
 

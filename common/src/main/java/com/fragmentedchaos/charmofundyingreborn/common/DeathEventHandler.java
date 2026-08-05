@@ -57,7 +57,7 @@ public final class DeathEventHandler {
             }
             return ok;
         } catch (Exception e) {
-            Constants.LOG.error("Error consuming totem: {}", e.getMessage());
+            Constants.LOG.error("Error consuming totem", e);
             return false;
         }
     }
