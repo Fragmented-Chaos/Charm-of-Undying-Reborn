@@ -8,7 +8,7 @@
 ### 移除
 
 - 移除自定义配置文件（`custom_totems.json`）功能，totem 识别完全由 `c:totems` 数据包标签驱动
-- 移除 `/chor reload` 命令，保留 `/chor check`
+- 移除 NeoForge端`/chor reload` 命令
 - 移除配置功能相关的语言文件与无效/冗余资源文件（错误路径的物品标签、重复的实体槽位数据、冗余 mixins 配置）
 ---
 
