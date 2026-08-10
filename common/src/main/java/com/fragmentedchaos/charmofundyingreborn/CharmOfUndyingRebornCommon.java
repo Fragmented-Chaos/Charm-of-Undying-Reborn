@@ -1,6 +1,5 @@
 package com.fragmentedchaos.charmofundyingreborn;
 
-import com.fragmentedchaos.charmofundyingreborn.common.ModConfig;
 import com.fragmentedchaos.charmofundyingreborn.common.TotemProviders;
 
 /**
@@ -21,6 +20,5 @@ public final class CharmOfUndyingRebornCommon {
         initialized = true;
         Constants.LOG.info("Initializing {} by {}", Constants.MOD_NAME, Constants.MOD_AUTHORS);
         TotemProviders.init();
-        ModConfig.load();
     }
 }

@@ -1,26 +1,23 @@
 # 更新日志
 
-## v1.0.1-beta
+## 1.0.2-beta
 
-### ✨ 新功能
+### 修复
 
-- **ITotemEffect 可扩展图腾效果体系**
-  - 新增 `ITotemEffect` 接口：`modifyStack()` 自定义消耗方式、`applyEffects()` 自定义复活效果
-  - `VanillaTotemEffect` 默认实现（原版药水效果）
-  - `TotemProviders` 注册表，其他模组可通过 `TotemProviders.register("modid:item", effect)` 接入
-  - 图腾三级接入机制：`c:totems` 标签（免代码）→ `custom_totems.json` 配置（免代码）→ API 注册（全功能）
+- 修复 NeoForge 端导致其他模组饰品无法放入 Curios 饰品栏的问题（不再为所有物品注册 `ICurio` 能力）
+### 移除
 
-- **自定义图腾复活动画**（1.0.0 仅原版 `broadcastEntityEvent(35)` 音效粒子，本版本新增图标）
-  - 新增 `TotemUsePayload` 自定义网络包（基于原版 `CustomPacketPayload`，双平台兼容）
-  - `ClientTotemHandler` 客户端渲染图腾物品图标
-  - `INetworkHelper` 平台抽象，Fabric/NeoForge 各自实现
+- 移除自定义配置文件（`custom_totems.json`）功能，totem 识别完全由 `c:totems` 数据包标签驱动
+- 移除 `/chor reload` 命令，保留 `/chor check`
+- 移除配置功能相关的语言文件与无效/冗余资源文件（错误路径的物品标签、重复的实体槽位数据、冗余 mixins 配置）
+---
 
-- **NeoForge（Curios）护符槽动态准入**
-  - 槽位 JSON 新增 `validators`，配合 `CuriosSlotTypes.registerPredicate` 运行时动态判断
-  - 配置文件（`custom_totems.json`）新增物品可立即放入护符槽，无需重启
+## 1.0.1-beta
 
-- **NeoForge（Curios）护符槽单物品放入**
-  - 新增 `CharmSlotLimitMixin`：拖入可堆叠物品时自动只放入 1 个，其余返回背包
+### 新功能
+
+- 新增 `TotemUsePayload` 自定义网络包
+- `ClientTotemHandler` 客户端渲染图腾物品图标
 
 ### 修复
 

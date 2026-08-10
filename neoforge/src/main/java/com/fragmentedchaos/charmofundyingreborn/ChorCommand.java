@@ -1,6 +1,5 @@
 package com.fragmentedchaos.charmofundyingreborn;
 
-import com.fragmentedchaos.charmofundyingreborn.common.ModConfig;
 import com.fragmentedchaos.charmofundyingreborn.common.TotemHelper;
 import com.fragmentedchaos.charmofundyingreborn.platform.CharmSlotServices;
 import com.mojang.brigadier.CommandDispatcher;
@@ -28,25 +27,9 @@ public final class ChorCommand {
         CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
         dispatcher.register(
                 Commands.literal(COMMAND_ROOT)
-                        .then(Commands.literal("reload")
-                                .executes(ChorCommand::reloadConfig))
                         .then(Commands.literal("check")
                                 .executes(ChorCommand::checkCharm))
         );
-    }
-
-    private static int reloadConfig(CommandContext<CommandSourceStack> ctx) {
-        try {
-            ModConfig.reload();
-            ctx.getSource().sendSuccess(
-                    () -> Component.literal("Configuration reloaded successfully!").withColor(0x55FF55),
-                    true);
-            return 1;
-        } catch (Exception e) {
-            ctx.getSource().sendFailure(
-                    Component.literal("Failed to reload configuration.").withColor(0xFF5555));
-            return 0;
-        }
     }
 
     private static int checkCharm(CommandContext<CommandSourceStack> ctx) {

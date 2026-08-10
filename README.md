@@ -29,21 +29,6 @@
 2. 将不死图腾放入 **护符（Charm）** 槽
 3. 死亡时会自动消耗图腾并复活
 
-## 📁 配置文件
-
-自定义图腾列表位于 `config/charmofundyingreborn/custom_totems.json`：
-
-```json
-[
-    "minecraft:totem_of_undying",
-    "modid:custom_totem_item"
-]
-```
-
-使用 `/chor reload` 热重载配置（NeoForge），`/chor check` 查看当前护符槽物品。
-
-
-
 ## 📄 许可证
 
 MIT License © 2026 Rending_Void
