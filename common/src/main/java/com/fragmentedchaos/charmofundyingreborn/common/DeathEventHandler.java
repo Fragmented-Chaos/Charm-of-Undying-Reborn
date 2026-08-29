@@ -53,7 +53,6 @@ public final class DeathEventHandler {
                 if (player instanceof ServerPlayer sp) {
                     CharmSlotServices.NETWORK.sendTotemUse(sp, copy);
                 }
-                Constants.LOG.info("Totem from charm slot activated for player {}!", player.getName().getString());
             }
             return ok;
         } catch (Exception e) {

@@ -1,4 +1,3 @@
 {
-  "add_cosmetic": true,
-  "validators": ["charmofundyingreborn:totem"]
+  "add_cosmetic": true
 }

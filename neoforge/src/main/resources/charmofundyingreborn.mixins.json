@@ -4,8 +4,7 @@
     "compatibilityLevel": "JAVA_25",
     "refmap": "charmofundyingreborn.refmap.json",
     "mixins": [
-        "CharmSlotTotemMixin",
-        "CharmSlotLimitMixin"
+        "CharmSlotTotemMixin"
     ],
     "client": [],
     "server": [],
