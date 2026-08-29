@@ -3,7 +3,6 @@ package com.fragmentedchaos.charmofundyingreborn;
 import com.fragmentedchaos.charmofundyingreborn.common.TotemHelper;
 import com.fragmentedchaos.charmofundyingreborn.platform.NeoForgeNetworkHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
@@ -11,7 +10,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.CuriosSlotTypes;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
@@ -39,7 +37,6 @@ public class CharmOfUndyingReborn {
         Constants.LOG.info("Starting {} on NeoForge by {}", Constants.MOD_NAME, Constants.MOD_AUTHORS);
 
         CharmOfUndyingRebornCommon.init();
-        registerTotemValidator();
         eventBus.addListener(NeoForgeNetworkHelper::onRegisterPayloads);
         // Register totem ICurioItems only once the server is fully started:
         // creating default ItemStacks requires DataComponents to be bound and
@@ -48,25 +45,6 @@ public class CharmOfUndyingReborn {
         ChorCommand.register();
 
         Constants.LOG.info("{} successfully initialized on NeoForge", Constants.MOD_NAME);
-    }
-
-    /**
-     * Registers the slot validator for the Curios charm slot:
-     * any item accepted by {@link TotemHelper#isTotem(ItemStack)} (the
-     * {@code c:totems} tag) can be placed in the charm slot. Checked dynamically
-     * at runtime, so datapack tag changes apply without restarting.
-     *
-     * <p>Note: an {@code ICurio} capability is intentionally NOT registered on every
-     * item. Curios treats an existing {@code ICurio} as the authoritative equip check
-     * ({@code canEquip}) for every slot; registering one on all items would block
-     * non-totem items - including other mods' curios - from being equipped into
-     * any curio slot. Slot eligibility is instead handled through this validator
-     * (plus the {@code curios:charm} item tag).
-     */
-    private static void registerTotemValidator() {
-        CuriosSlotTypes.registerPredicate(
-                Identifier.fromNamespaceAndPath(Constants.MOD_ID, "totem"),
-                (slotContext, stack) -> TotemHelper.isTotem(stack));
     }
 
     /**

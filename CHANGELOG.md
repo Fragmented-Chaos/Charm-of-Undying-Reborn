@@ -1,5 +1,22 @@
 # 更新日志
 
+## 1.0.3-beta
+
+### 新功能
+
+- NeoForge 端新增 `TotemCurioRenderer` + `ClientSetup`，将原版不死图腾以 3D 模型渲染到玩家身上
+
+### 修复
+
+- Fabric 端护符槽不再显示"注册名"：修复槽位谓词（`trinkets:relevant` → `trinkets:default`）并补上中英文槽位名
+- 护符槽确认改用 `#c:totems` 标签链路，任意 `c:totems` 物品能放入护符槽
+- 移除 NeoForge 端 `CharmSlotLimitMixin`
+
+### 重构
+
+- NeoForge 护符槽与"图腾判定"解耦：移除 `charmofundyingreborn:totem` 槽位校验器，槽位按 `curios:charm` 标签/ICurio 放行，复活仍仅对 `c:totems` 物品生效，避免误判其它模组的饰品
+---
+
 ## 1.0.2-beta
 
 ### 修复
