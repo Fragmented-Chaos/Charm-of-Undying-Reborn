@@ -3,7 +3,9 @@ package com.fragmentedchaos.charmofundyingreborn.common;
 import com.fragmentedchaos.charmofundyingreborn.Constants;
 
 import com.fragmentedchaos.charmofundyingreborn.platform.CharmSlotServices;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -52,6 +54,10 @@ public final class DeathEventHandler {
                 player.level().broadcastEntityEvent(player, (byte) 35);
                 if (player instanceof ServerPlayer sp) {
                     CharmSlotServices.NETWORK.sendTotemUse(sp, copy);
+                    // Match vanilla totem behavior: award the "item used" stat and fire the
+                    // "Totem of Undying" advancement (used_totem).
+                    sp.awardStat(Stats.ITEM_USED.get(copy.getItem()), 1);
+                    CriteriaTriggers.USED_TOTEM.trigger(sp, copy);
                 }
             }
             return ok;
