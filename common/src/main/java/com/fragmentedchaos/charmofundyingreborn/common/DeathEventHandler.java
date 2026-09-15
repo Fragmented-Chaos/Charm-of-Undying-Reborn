@@ -3,7 +3,6 @@ package com.fragmentedchaos.charmofundyingreborn.common;
 import com.fragmentedchaos.charmofundyingreborn.Constants;
 
 import com.fragmentedchaos.charmofundyingreborn.platform.CharmSlotServices;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.player.Player;
@@ -57,7 +56,7 @@ public final class DeathEventHandler {
                     // Match vanilla totem behavior: award the "item used" stat and fire the
                     // "Totem of Undying" advancement (used_totem).
                     sp.awardStat(Stats.ITEM_USED.get(copy.getItem()), 1);
-                    CriteriaTriggers.USED_TOTEM.trigger(sp, copy);
+                    AdvancementCompat.triggerUsedTotem(sp, copy);
                 }
             }
             return ok;
