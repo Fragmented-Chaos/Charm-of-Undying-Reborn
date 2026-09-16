@@ -24,7 +24,12 @@ public interface ITotemEffect {
 
     /**
      * Applies the totem resurrection effects.
+     * <p>
+     * The player's health has already been set to 1 by the caller, matching vanilla's order.
+     *
+     * @param player the player being saved
+     * @param stack  a snapshot of the consumed totem, taken before it was shrunk
      * @return true if effects were applied successfully
      */
-    boolean applyEffects(Player player);
+    boolean applyEffects(Player player, ItemStack stack);
 }

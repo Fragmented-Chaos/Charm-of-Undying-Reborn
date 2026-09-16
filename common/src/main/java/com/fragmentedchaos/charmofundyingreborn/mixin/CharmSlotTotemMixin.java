@@ -35,8 +35,7 @@ public abstract class CharmSlotTotemMixin {
      */
     @Inject(
             method = "checkTotemDeathProtection",
-            at = @At("HEAD"),
-            cancellable = true
+            at = @At("HEAD")
     )
     private void charmofundyingreborn$precheckTotemDeathProtection(
             DamageSource damageSource,
@@ -67,7 +66,8 @@ public abstract class CharmSlotTotemMixin {
             DamageSource damageSource,
             CallbackInfoReturnable<Boolean> cir) {
 
-        if (charmofundyingreborn$totemFound && DeathEventHandler.consumeAndActivate((Player) (Object) this)) {
+        if (charmofundyingreborn$totemFound
+                && DeathEventHandler.consumeAndActivate((Player) (Object) this, damageSource)) {
             cir.setReturnValue(true);
         }
     }

@@ -1,13 +1,21 @@
 package com.fragmentedchaos.charmofundyingreborn.common;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.DeathProtection;
 
 /**
- * Default totem effect — mirrors the exact vanilla behavior:
- * set health to 1, clear effects, apply regeneration/absorption/fire-resistance.
+ * Default totem effect.
+ * <p>
+ * Prefers the item's own {@link DeathProtection} data component — the mechanism vanilla has used
+ * since 26.1 — so that every {@code c:totems} item describes its own resurrection. This is what
+ * makes custom totems (with their own {@code death_effects}) behave correctly instead of silently
+ * receiving the vanilla totem's effects.
+ * <p>
+ * Falls back to the vanilla totem's effect list for tagged items that carry no such component.
  */
 public class VanillaTotemEffect implements ITotemEffect {
 
@@ -24,8 +32,15 @@ public class VanillaTotemEffect implements ITotemEffect {
     }
 
     @Override
-    public boolean applyEffects(Player player) {
-        player.setHealth(1.0F);
+    public boolean applyEffects(Player player, ItemStack stack) {
+        DeathProtection protection = stack.get(DataComponents.DEATH_PROTECTION);
+        if (protection != null) {
+            // Let the item run its own death_effects, exactly as vanilla does.
+            protection.applyEffects(stack, player);
+            return true;
+        }
+
+        // Fallback for items tagged c:totems that carry no DEATH_PROTECTION component.
         player.removeAllEffects();
         player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, REGEN_DURATION, REGEN_AMPLIFIER));
         player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, ABSORPTION_DURATION, ABSORPTION_AMPLIFIER));

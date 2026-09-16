@@ -28,6 +28,13 @@
 2. 将不死图腾放入 **护符（Charm）** 槽
 3. 死亡时会自动消耗图腾并复活
 
+## 🛠️ 开发者
+
+面向其他模组的接入文档：
+
+- [Integration guide (English)](docs/INTEGRATION.md)
+- [集成文档（中文）](docs/INTEGRATION.zh_CN.md)
+
 ## 📄 许可证
 
 MIT License © 2026 Rending_Void
