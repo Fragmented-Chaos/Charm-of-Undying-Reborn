@@ -58,11 +58,14 @@ public final class DeathEventHandler {
             ITotemEffect effect = provider.orElse(TotemProviders.VANILLA);
 
             ItemStack copy = stack.copy();
-            effect.modifyStack(stack);
             // Vanilla sets health before running the item's death effects.
             player.setHealth(1.0F);
             boolean ok = effect.applyEffects(player, copy);
             if (ok) {
+                // Consume only after the effects actually applied, so a failing effect (a custom
+                // ITotemEffect, or a ConsumeEffect from the item's data that throws) cannot leave
+                // the player dead with the totem already gone.
+                effect.modifyStack(stack);
                 player.level().broadcastEntityEvent(player, (byte) 35);
                 if (player instanceof ServerPlayer sp) {
                     // Vanilla emits this so sculk sensors / wardens notice the totem being used.
@@ -73,6 +76,9 @@ public final class DeathEventHandler {
                     sp.awardStat(Stats.ITEM_USED.get(copy.getItem()), 1);
                     AdvancementCompat.triggerUsedTotem(sp, copy);
                 }
+            } else {
+                Constants.LOG.warn("Totem effects did not apply; "
+                        + "the totem in the charm slot was left untouched");
             }
             return ok;
         } catch (Exception e) {

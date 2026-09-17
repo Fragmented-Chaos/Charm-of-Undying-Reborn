@@ -14,8 +14,13 @@ public final class ClientTotemHandler {
     public static void handle(TotemUsePayload payload) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null) return;
+
         Entity entity = mc.level.getEntity(payload.entityId());
-        if (entity != null) {
+        // The payload is broadcast to every tracking client, but the activation animation is a
+        // first-person overlay. Vanilla scopes it the same way in
+        // ClientPacketListener#handleEntityEvent (case 35): only when the affected entity is the
+        // local player. Without this check, another player's totem would pop up on your screen.
+        if (entity == mc.player) {
             mc.gameRenderer.displayItemActivation(payload.stack());
         }
     }

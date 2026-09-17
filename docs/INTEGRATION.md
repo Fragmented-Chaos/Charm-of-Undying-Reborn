@@ -156,7 +156,7 @@ public interface ITotemEffect {
 | Method | Called | Notes |
 |---|---|---|
 | `applyEffects(player, stack)` | On revival | `stack` is a snapshot taken **before** consumption. The player's health has **already been set to 1** when this runs. Return `false` to signal failure. |
-| `modifyStack(stack)` | On revival, before `applyEffects` | Default implementation is `shrink(1)`. Put custom consumption (durability, etc.) here. |
+| `modifyStack(stack)` | On revival, **after** `applyEffects` succeeds | Default implementation is `shrink(1)`. Put custom consumption (durability, etc.) here. It is not called when `applyEffects` returns `false`, so a failed resurrection does not consume the totem. |
 | `bypassInvul()` | **Not called in the current version** | Reserved. Setting it has no effect today. |
 
 ### Registering

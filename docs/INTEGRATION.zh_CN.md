@@ -145,7 +145,7 @@ public interface ITotemEffect {
 | 方法 | 调用时机 | 说明 |
 |---|---|---|
 | `applyEffects(player, stack)` | 复活时 | `stack` 是**消耗前**的快照；**调用前玩家血量已被设为 1**；返回 `false` 表示失败 |
-| `modifyStack(stack)` | 复活时，早于 `applyEffects` | 默认实现为 `shrink(1)`；自定义消耗（如消耗耐久）在此实现 |
+| `modifyStack(stack)` | 复活时，**`applyEffects` 成功之后** | 默认实现为 `shrink(1)`；自定义消耗（如消耗耐久）在此实现。若 `applyEffects` 返回 `false` 则不会调用，因此复活失败不会消耗图腾 |
 | `bypassInvul()` | **当前版本未被调用** | 预留接口，现阶段设置它没有任何效果 |
 
 ### 注册
