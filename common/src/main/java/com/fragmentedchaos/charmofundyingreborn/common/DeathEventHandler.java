@@ -3,10 +3,13 @@ package com.fragmentedchaos.charmofundyingreborn.common;
 import com.fragmentedchaos.charmofundyingreborn.Constants;
 
 import com.fragmentedchaos.charmofundyingreborn.platform.CharmSlotServices;
+import com.fragmentedchaos.charmofundyingreborn.platform.services.ITotemUseGuard;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.gameevent.GameEvent;
 
 import java.util.Optional;
 
@@ -36,28 +39,46 @@ public final class DeathEventHandler {
      * Consume and activate the totem in the charm slot.
      * Looks up an {@link ITotemEffect} provider for the item;
      * falls back to vanilla behavior if none registered.
+     *
+     * @param damageSource the damage that would have killed the player, forwarded to the
+     *                     platform totem-use guard so other mods can veto the resurrection
      */
-    public static boolean consumeAndActivate(Player player) {
+    public static boolean consumeAndActivate(Player player, DamageSource damageSource) {
         if (player == null || player.isRemoved()) return false;
         try {
             ItemStack stack = CharmSlotServices.CHARM_SLOT.getCharmSlot(player);
             if (stack == null || stack.isEmpty() || !TotemHelper.isTotem(stack)) return false;
 
+            // Give other mods the same veto they get for a hand-held totem. Vanilla only offers it
+            // inside its InteractionHand loop, which this mixin short-circuits before reaching.
+            ITotemUseGuard guard = CharmSlotServices.TOTEM_GUARD;
+            if (guard != null && !guard.allowTotemUse(player, stack, damageSource)) return false;
+
             Optional<ITotemEffect> provider = TotemProviders.getEffect(stack.getItem());
             ITotemEffect effect = provider.orElse(TotemProviders.VANILLA);
 
             ItemStack copy = stack.copy();
-            effect.modifyStack(stack);
-            boolean ok = effect.applyEffects(player);
+            // Vanilla sets health before running the item's death effects.
+            player.setHealth(1.0F);
+            boolean ok = effect.applyEffects(player, copy);
             if (ok) {
+                // Consume only after the effects actually applied, so a failing effect (a custom
+                // ITotemEffect, or a ConsumeEffect from the item's data that throws) cannot leave
+                // the player dead with the totem already gone.
+                effect.modifyStack(stack);
                 player.level().broadcastEntityEvent(player, (byte) 35);
                 if (player instanceof ServerPlayer sp) {
+                    // Vanilla emits this so sculk sensors / wardens notice the totem being used.
+                    copy.causeUseVibration(player, GameEvent.ITEM_INTERACT_FINISH);
                     CharmSlotServices.NETWORK.sendTotemUse(sp, copy);
                     // Match vanilla totem behavior: award the "item used" stat and fire the
                     // "Totem of Undying" advancement (used_totem).
                     sp.awardStat(Stats.ITEM_USED.get(copy.getItem()), 1);
                     AdvancementCompat.triggerUsedTotem(sp, copy);
                 }
+            } else {
+                Constants.LOG.warn("Totem effects did not apply; "
+                        + "the totem in the charm slot was left untouched");
             }
             return ok;
         } catch (Exception e) {

@@ -17,14 +17,22 @@ public interface ITotemEffect {
     }
 
     /**
-     * Modifies the item stack to consume the totem.
-     * Default: shrinks by 1. Override for custom consumption (e.g. durability).
+     * Consumes the totem. Default: shrinks by 1. Override for custom consumption
+     * (e.g. durability).
+     * <p>
+     * Called only after {@link #applyEffects} has reported success, so a failed resurrection
+     * never costs the player their totem.
      */
     void modifyStack(ItemStack stack);
 
     /**
      * Applies the totem resurrection effects.
+     * <p>
+     * The player's health has already been set to 1 by the caller, matching vanilla's order.
+     *
+     * @param player the player being saved
+     * @param stack  a snapshot of the consumed totem, taken before it was shrunk
      * @return true if effects were applied successfully
      */
-    boolean applyEffects(Player player);
+    boolean applyEffects(Player player, ItemStack stack);
 }
