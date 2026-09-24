@@ -251,17 +251,7 @@ actually holding.
 
 ---
 
-## 5. Version compatibility
-
-A single jar supports **both Minecraft 26.1 and 26.2**.
-
-Minecraft 26.2 moved `CriteriaTriggers` from `net.minecraft.advancements` to
-`net.minecraft.advancements.triggers`. The mod resolves the trigger's location at runtime instead
-of linking against it at compile time, so no per-version build is required.
-
-Your mod only needs to declare a normal dependency on `charmofundyingreborn`.
-
-### Required dependencies
+## 5. Required dependencies
 
 Charm of Undying: Reborn requires **Trinkets** on Fabric or **Curios** on NeoForge at runtime.
 

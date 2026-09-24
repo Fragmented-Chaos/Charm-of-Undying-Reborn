@@ -227,15 +227,7 @@ public final class YourTotemListener {
 
 ---
 
-## 五、版本兼容
-
-单个 jar **同时支持 Minecraft 26.1 与 26.2**。
-
-原理：26.2 将 `CriteriaTriggers` 从 `net.minecraft.advancements` 迁移到了 `net.minecraft.advancements.triggers`，模组在运行期解析该触发器的位置，而不是在编译期链接，因此无需按 MC 版本分发不同构建。
-
-你的模组只需正常声明对 `charmofundyingreborn` 的依赖即可。
-
-### 运行前置
+## 五、运行前置
 
 Charm of Undying: Reborn 运行期需要 Fabric 端的 **Trinkets** 或 NeoForge 端的 **Curios**。
 
