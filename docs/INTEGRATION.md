@@ -251,13 +251,13 @@ actually holding.
 
 ---
 
-### Required dependencies
+## 5. Required dependencies
 
 Charm of Undying: Reborn requires **Trinkets** on Fabric or **Curios** on NeoForge at runtime.
 
 ---
 
-## 5. Breaking changes
+## 6. Breaking changes
 
 ### 1.1.0-alpha.1
 

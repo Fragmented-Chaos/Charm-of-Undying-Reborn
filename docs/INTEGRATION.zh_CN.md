@@ -227,13 +227,13 @@ public final class YourTotemListener {
 
 ---
 
-### 运行前置
+## 五、运行前置
 
 Charm of Undying: Reborn 运行期需要 Fabric 端的 **Trinkets** 或 NeoForge 端的 **Curios**。
 
 ---
 
-## 五、破坏性变更
+## 六、破坏性变更
 
 ### 1.1.0-alpha.1
 
