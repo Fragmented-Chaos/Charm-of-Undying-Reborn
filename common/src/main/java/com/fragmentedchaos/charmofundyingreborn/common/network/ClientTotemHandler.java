@@ -20,8 +20,10 @@ public final class ClientTotemHandler {
         // first-person overlay. Vanilla scopes it the same way in
         // ClientPacketListener#handleEntityEvent (case 35): only when the affected entity is the
         // local player. Without this check, another player's totem would pop up on your screen.
+        //
+        // 26.3 moved the entry point from GameRenderer/ScreenEffectRenderer to LocalPlayer.
         if (entity == mc.player) {
-            mc.gameRenderer.displayItemActivation(payload.stack());
+            mc.player.displayItemActivation(payload.stack());
         }
     }
 }

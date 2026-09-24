@@ -67,7 +67,8 @@ public class TotemCurioRenderer implements ICurioRenderer {
         // NOTE: visual/tunable values; adjust to taste for a specific totem model.
         poseStack.pushPose();
         poseStack.translate(0.0F, 0.2F, -0.15F);
-        poseStack.mulPose(Direction.DOWN.getRotation());
+        // 26.3 removed mulPose(Quaternionf); rotate(Quaternionfc) is the replacement.
+        poseStack.rotate(Direction.DOWN.getRotation());
         poseStack.scale(0.35F, 0.35F, 0.35F);
         itemState.submit(poseStack, submitNodeCollector, packedLight, OverlayTexture.NO_OVERLAY,
                 renderState.outlineColor);
