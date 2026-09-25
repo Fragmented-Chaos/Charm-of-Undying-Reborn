@@ -5,6 +5,8 @@ import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
+
 /**
  * Platform-abstracted service for accessing the "charm" accessory slot.
  * Fabric uses Trinkets, NeoForge uses Curios — the common code works
@@ -35,4 +37,17 @@ public interface ICharmSlotHelper {
      * @return true if the charm slot exists and is accessible
      */
     boolean hasCharmSlot(Player player);
+
+    /**
+     * Applies {@code action} to the totem in the charm slot and writes the result back into the
+     * same slot.
+     * <p>
+     * Needed because a platform may hand out a detached copy: Curios 17 on NeoForge rebuilds an
+     * {@link ItemStack} from its resource handler on every read, so mutating the stack returned by
+     * {@link #getCharmSlot(Player)} would not touch the real inventory.
+     *
+     * @param player The player whose charm slot holds the totem
+     * @param action Receives the stack to modify; emptying it removes the totem
+     */
+    void modifyCharmSlot(Player player, Consumer<ItemStack> action);
 }

@@ -66,7 +66,9 @@ public final class DeathEventHandler {
                 // Consume only after the effects actually applied, so a failing effect (a custom
                 // ITotemEffect, or a ConsumeEffect from the item's data that throws) cannot leave
                 // the player dead with the totem already gone.
-                effect.modifyStack(stack);
+                // The platform writes the result back into its slot: Curios 17 hands out a fresh
+                // stack per read, so mutating the stack from getCharmSlot() alone does not persist.
+                CharmSlotServices.CHARM_SLOT.modifyCharmSlot(player, effect::modifyStack);
                 player.level().broadcastEntityEvent(player, (byte) 35);
                 if (player instanceof ServerPlayer sp) {
                     // Vanilla emits this so sculk sensors / wardens notice the totem being used.

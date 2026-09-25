@@ -5,7 +5,10 @@ import com.fragmentedchaos.charmofundyingreborn.platform.services.ICharmSlotHelp
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.SlotResult;
+
+import java.util.function.Consumer;
 
 /**
  * NeoForge implementation of ICharmSlotHelper using Curios API.
@@ -30,5 +33,18 @@ public class NeoForgeCharmSlotHelper implements ICharmSlotHelper {
     @Override
     public boolean hasCharmSlot(Player player) {
         return CuriosApi.getCuriosInventory(player).isPresent();
+    }
+
+    @Override
+    public void modifyCharmSlot(Player player, Consumer<ItemStack> action) {
+        CuriosApi.getCuriosInventory(player).ifPresent(inv ->
+                inv.findFirstCurio(TotemHelper::isTotem).ifPresent(result -> {
+                    // Curios 17 backs its slots with NeoForge's transfer API and builds a fresh
+                    // ItemStack on every read, so the modified stack must be written back explicitly.
+                    ItemStack stack = result.stack();
+                    action.accept(stack);
+                    SlotContext context = result.slotContext();
+                    inv.setEquippedCurio(context.identifier(), context.index(), stack);
+                }));
     }
 }
