@@ -96,7 +96,7 @@ public class NeoForgeCharmSlotHelper implements ICharmSlotHelper {
         // Defensive only: CharmOfUndyingReborn already reports a loading error when neither mod is
         // present, so startup normally never gets this far.
         if (MISSING_WARNING_LOGGED.compareAndSet(false, true)) {
-            Constants.LOG.warn("Neither Curios nor Trinkets Updated is installed, so the charm slot "
+            Constants.LOG.warn("Neither Curios API nor Trinkets Updated is installed, so the charm slot "
                     + "stays inactive. Install one of them to enable it.");
         }
         return InactiveCharmSlotHelper.INSTANCE;

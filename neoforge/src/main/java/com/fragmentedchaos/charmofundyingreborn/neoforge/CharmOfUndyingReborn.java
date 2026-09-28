@@ -62,7 +62,7 @@ public class CharmOfUndyingReborn {
         }
         ModLoader.addLoadingIssue(ModLoadingIssue.error(
                 "Charm of Undying: Reborn requires an accessory mod on NeoForge: install either "
-                        + "Curios or Trinkets Updated (neither was found).")
+                        + "Curios API or Trinkets Updated (neither was found).")
                 .withAffectedMod(container.getModInfo()));
     }
 
