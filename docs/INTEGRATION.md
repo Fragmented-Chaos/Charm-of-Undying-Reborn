@@ -253,7 +253,9 @@ actually holding.
 
 ## 5. Required dependencies
 
-Charm of Undying: Reborn requires **Trinkets** on Fabric or **Curios** on NeoForge at runtime.
+Charm of Undying: Reborn requires an accessory mod at runtime: **Trinkets Updated** on Fabric, or
+**Curios** or **Trinkets Updated** on NeoForge (either one satisfies the dependency; when both are
+installed neither is disabled and the first charm slot that holds a totem is used).
 
 ---
 

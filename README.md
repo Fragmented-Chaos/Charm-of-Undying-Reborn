@@ -14,7 +14,7 @@
 | 平台 | 前置模组                                                                                                           |
 |------|----------------------------------------------------------------------------------------------------------------|
 | Fabric | [Fabric API](https://github.com/FabricMC/fabric-api) + [Trinkets Updated ](https://github.com/Patbox/trinkets) |
-| NeoForge | [Curios API](https://github.com/TheIllusiveC4/Curios)                                                                  |
+| NeoForge | [Curios API](https://github.com/TheIllusiveC4/Curios) 或 [Trinkets Updated](https://github.com/Patbox/trinkets)（任选其一）                                                                  |
 
 ### 下载
 

@@ -1,4 +1,6 @@
-package com.fragmentedchaos.charmofundyingreborn;
+package com.fragmentedchaos.charmofundyingreborn.neoforge;
+
+import com.fragmentedchaos.charmofundyingreborn.Constants;
 
 import com.fragmentedchaos.charmofundyingreborn.common.TotemHelper;
 import com.fragmentedchaos.charmofundyingreborn.platform.CharmSlotServices;
@@ -40,14 +42,14 @@ public final class ChorCommand {
         }
 
         try {
-            if (!CharmSlotServices.CHARM_SLOT.hasCharmSlot(player)) {
+            if (!CharmSlotServices.charmSlot().hasCharmSlot(player)) {
                 source.sendSuccess(
                         () -> Component.literal("You do not have a charm slot available.").withColor(0xAAAAAA),
                         false);
                 return 1;
             }
 
-            ItemStack charmStack = CharmSlotServices.CHARM_SLOT.getCharmSlot(player);
+            ItemStack charmStack = CharmSlotServices.charmSlot().getCharmSlot(player);
             if (charmStack == null || charmStack.isEmpty()) {
                 source.sendSuccess(
                         () -> Component.literal("Your charm slot is empty.").withColor(0xAAAAAA),

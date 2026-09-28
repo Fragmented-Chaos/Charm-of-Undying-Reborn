@@ -17,10 +17,10 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.fragmentedchaos.charmofundyingreborn.CharmOfUndyingReborn"
+            "com.fragmentedchaos.charmofundyingreborn.fabric.CharmOfUndyingRebornFabric"
         ],
         "client": [
-            "com.fragmentedchaos.charmofundyingreborn.FabricClientSetup"
+            "com.fragmentedchaos.charmofundyingreborn.fabric.FabricClientSetup"
         ]
     },
     "mixins": [

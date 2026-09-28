@@ -1,4 +1,4 @@
-package com.fragmentedchaos.charmofundyingreborn.platform;
+package com.fragmentedchaos.charmofundyingreborn.platform.trinkets;
 
 import com.fragmentedchaos.charmofundyingreborn.Constants;
 import com.fragmentedchaos.charmofundyingreborn.common.TotemHelper;
@@ -11,10 +11,13 @@ import net.minecraft.world.item.ItemStack;
 import java.util.function.Consumer;
 
 /**
- * Fabric implementation of ICharmSlotHelper using Trinkets Updated API.
- * Searches all trinket inventories for totem items.
+ * Trinkets Updated implementation of {@link ICharmSlotHelper}.
+ * <p>
+ * Lives in {@code common} because Trinkets is a multiloader mod: the very same API (backed by Yumi)
+ * is available on Fabric and on NeoForge, so both loaders share this implementation. It searches
+ * every trinket inventory for a totem, which is how the Fabric side has always worked.
  */
-public class FabricCharmSlotHelper implements ICharmSlotHelper {
+public class TrinketsCharmSlotHelper implements ICharmSlotHelper {
 
     @Override
     public String getPlatformName() {

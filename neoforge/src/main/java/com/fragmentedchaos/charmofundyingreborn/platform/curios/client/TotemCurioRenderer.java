@@ -1,4 +1,4 @@
-package com.fragmentedchaos.charmofundyingreborn.client;
+package com.fragmentedchaos.charmofundyingreborn.platform.curios.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;

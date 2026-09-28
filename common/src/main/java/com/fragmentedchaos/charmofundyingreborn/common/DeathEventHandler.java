@@ -27,8 +27,8 @@ public final class DeathEventHandler {
     public static boolean hasTotemInCharm(Player player) {
         if (player == null || player.isRemoved()) return false;
         try {
-            if (!CharmSlotServices.CHARM_SLOT.hasCharmSlot(player)) return false;
-            ItemStack stack = CharmSlotServices.CHARM_SLOT.getCharmSlot(player);
+            if (!CharmSlotServices.charmSlot().hasCharmSlot(player)) return false;
+            ItemStack stack = CharmSlotServices.charmSlot().getCharmSlot(player);
             return stack != null && !stack.isEmpty() && TotemHelper.isTotem(stack);
         } catch (Exception e) {
             Constants.LOG.error("Error checking charm slot: {}", e.getMessage());
@@ -47,12 +47,12 @@ public final class DeathEventHandler {
     public static boolean consumeAndActivate(Player player, DamageSource damageSource) {
         if (player == null || player.isRemoved()) return false;
         try {
-            ItemStack stack = CharmSlotServices.CHARM_SLOT.getCharmSlot(player);
+            ItemStack stack = CharmSlotServices.charmSlot().getCharmSlot(player);
             if (stack == null || stack.isEmpty() || !TotemHelper.isTotem(stack)) return false;
 
             // Give other mods the same veto they get for a hand-held totem. Vanilla only offers it
             // inside its InteractionHand loop, which this mixin short-circuits before reaching.
-            ITotemUseGuard guard = CharmSlotServices.TOTEM_GUARD;
+            ITotemUseGuard guard = CharmSlotServices.totemGuard();
             if (guard != null && !guard.allowTotemUse(player, stack, damageSource)) return false;
 
             Optional<ITotemEffect> provider = TotemProviders.getEffect(stack.getItem());
@@ -68,12 +68,12 @@ public final class DeathEventHandler {
                 // the player dead with the totem already gone.
                 // The platform writes the result back into its slot: Curios 17 hands out a fresh
                 // stack per read, so mutating the stack from getCharmSlot() alone does not persist.
-                CharmSlotServices.CHARM_SLOT.modifyCharmSlot(player, effect::modifyStack);
+                CharmSlotServices.charmSlot().modifyCharmSlot(player, effect::modifyStack);
                 player.level().broadcastEntityEvent(player, (byte) 35);
                 if (player instanceof ServerPlayer sp) {
                     // Vanilla emits this so sculk sensors / wardens notice the totem being used.
                     copy.causeUseVibration(player, GameEvent.ITEM_INTERACT_FINISH);
-                    CharmSlotServices.NETWORK.sendTotemUse(sp, copy);
+                    CharmSlotServices.network().sendTotemUse(sp, copy);
                     // Match vanilla totem behavior: award the "item used" stat and fire the
                     // "Totem of Undying" advancement (used_totem).
                     sp.awardStat(Stats.ITEM_USED.get(copy.getItem()), 1);

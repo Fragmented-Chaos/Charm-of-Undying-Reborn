@@ -1,4 +1,4 @@
-package com.fragmentedchaos.charmofundyingreborn.platform;
+package com.fragmentedchaos.charmofundyingreborn.neoforge;
 
 import com.fragmentedchaos.charmofundyingreborn.common.network.ClientTotemHandler;
 import com.fragmentedchaos.charmofundyingreborn.common.network.TotemUsePayload;

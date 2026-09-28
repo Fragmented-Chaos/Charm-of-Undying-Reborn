@@ -5,50 +5,66 @@ import com.fragmentedchaos.charmofundyingreborn.platform.services.ICharmSlotHelp
 import com.fragmentedchaos.charmofundyingreborn.platform.services.INetworkHelper;
 import com.fragmentedchaos.charmofundyingreborn.platform.services.ITotemUseGuard;
 
-import java.util.ServiceLoader;
-
 /**
- * Service loader for the platform-specific charm slot helper.
+ * Holds the platform-specific service implementations.
+ * <p>
+ * Each loader entry point installs its own implementations during initialization. This replaces the
+ * usual {@code META-INF/services} + {@link java.util.ServiceLoader} approach because the released
+ * artifact is a single universal jar that carries the Fabric and the NeoForge implementations at
+ * the same time, and one jar cannot contain two service files for the same interface. It also keeps
+ * {@code common} free of references to loader-specific classes, which would not compile otherwise.
  */
 public final class CharmSlotServices {
 
-    /**
-     * The loaded platform-specific charm slot helper implementation.
-     */
-    public static final ICharmSlotHelper CHARM_SLOT = load(ICharmSlotHelper.class);
-    public static final INetworkHelper NETWORK = load(INetworkHelper.class);
-
-    /**
-     * Optional platform hook letting other mods veto a charm-slot resurrection.
-     * {@code null} when the platform offers no such hook.
-     */
-    public static final ITotemUseGuard TOTEM_GUARD = loadOptional(ITotemUseGuard.class);
+    private static volatile ICharmSlotHelper charmSlot;
+    private static volatile INetworkHelper network;
+    private static volatile ITotemUseGuard totemGuard;
 
     private CharmSlotServices() {
         throw new UnsupportedOperationException("CharmSlotServices cannot be instantiated");
     }
 
-    public static <T> T load(Class<T> clazz) {
-        final T loadedService = ServiceLoader.load(clazz, CharmSlotServices.class.getClassLoader())
-                .findFirst()
-                .orElseThrow(() -> new NullPointerException(
-                        "Failed to load service for " + clazz.getName()
-                                + ". Ensure Trinkets (Fabric) or Curios (NeoForge) is installed."));
-        Constants.LOG.debug("Loaded {} for service {}", loadedService, clazz);
-        return loadedService;
+    /**
+     * Called once by the loader entry point, before anything touches the services.
+     *
+     * @param charmSlotHelper the accessory slot provider for this loader
+     * @param networkHelper   the networking implementation for this loader
+     * @param guard           optional resurrection veto hook, {@code null} if the loader has none
+     */
+    public static synchronized void install(ICharmSlotHelper charmSlotHelper,
+                                            INetworkHelper networkHelper,
+                                            ITotemUseGuard guard) {
+        if (charmSlot != null) {
+            Constants.LOG.warn("Platform services are already installed; ignoring the second install");
+            return;
+        }
+        charmSlot = charmSlotHelper;
+        network = networkHelper;
+        totemGuard = guard;
+        Constants.LOG.debug("Installed platform services (charm slot provider: {}, totem guard: {})",
+                charmSlotHelper.getPlatformName(), guard != null);
+    }
+
+    public static ICharmSlotHelper charmSlot() {
+        return require(charmSlot, "charm slot helper");
+    }
+
+    public static INetworkHelper network() {
+        return require(network, "network helper");
     }
 
     /**
-     * Loads a service that a platform is allowed not to provide, returning {@code null} instead of
-     * failing the whole mod when it is absent.
+     * @return the platform's veto hook, or {@code null} when the loader offers no such hook
      */
-    public static <T> T loadOptional(Class<T> clazz) {
-        final T loadedService = ServiceLoader.load(clazz, CharmSlotServices.class.getClassLoader())
-                .findFirst()
-                .orElse(null);
-        if (loadedService != null) {
-            Constants.LOG.debug("Loaded {} for optional service {}", loadedService, clazz);
+    public static ITotemUseGuard totemGuard() {
+        return totemGuard;
+    }
+
+    private static <T> T require(T service, String what) {
+        if (service == null) {
+            throw new IllegalStateException("Platform services are not installed yet (" + what
+                    + "); the loader entry point has to call CharmSlotServices.install(...) first");
         }
-        return loadedService;
+        return service;
     }
 }

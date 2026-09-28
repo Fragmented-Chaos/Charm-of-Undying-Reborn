@@ -24,9 +24,17 @@ versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.${mod_id}]]
+# Accessory slot provider. Curios and Trinkets Updated are both optional: NeoForge cannot express
+# "one of", so the provider is picked at runtime (see platform/NeoForgeCharmSlotHelper).
 modId = "curios"
-type="required"
+type="optional"
 versionRange = "[${curios_version},)"
+ordering = "NONE"
+side = "BOTH"
+[[dependencies.${mod_id}]]
+modId = "trinkets_updated"
+type="optional"
+versionRange = "[${trinkets_version},)"
 ordering = "NONE"
 side = "BOTH"
 
