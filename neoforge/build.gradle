@@ -8,6 +8,11 @@ repositories {
         name = "Illusive Soulworks maven"
         url = "https://maven.theillusivec4.top/"
     }
+    // Trinkets Updated (multiloader artifact; the same jar runs on NeoForge)
+    maven {
+        name = "Nucleoid"
+        url = "https://maven.nucleoid.xyz/releases"
+    }
 }
 
 neoForge {
@@ -77,6 +82,8 @@ dependencies {
     compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
     // Use the full Curios API jar at runtime
     runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+    // Optional alternative provider: the shared Trinkets helper is compiled by this module too
+    compileOnly "eu.pb4:trinkets:${trinkets_version}"
 }
 
 // Implement mcgradleconventions loader attribute

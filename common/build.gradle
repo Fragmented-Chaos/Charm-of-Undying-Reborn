@@ -3,6 +3,15 @@ plugins {
     id 'net.neoforged.moddev'
 }
 
+repositories {
+    // Trinkets Updated (multiloader artifact). Needed here because this module is never compiled
+    // directly, but javadoc still analyses its sources.
+    maven {
+        name = "Nucleoid"
+        url = "https://maven.nucleoid.xyz/releases"
+    }
+}
+
 neoForge {
     neoFormVersion = neo_form_version
     // Automatically enable AccessTransformers if the file exists
@@ -17,6 +26,8 @@ dependencies {
     // fabric and neoforge both bundle mixinextras, so it is safe to use it in common
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
+    // Shared Trinkets-based charm slot helper (see platform/trinkets)
+    compileOnly "eu.pb4:trinkets:${trinkets_version}"
 }
 
 configurations {

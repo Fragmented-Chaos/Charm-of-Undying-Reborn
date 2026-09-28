@@ -1,4 +1,4 @@
-package com.fragmentedchaos.charmofundyingreborn.platform;
+package com.fragmentedchaos.charmofundyingreborn.platform.curios;
 
 import com.fragmentedchaos.charmofundyingreborn.common.TotemHelper;
 import com.fragmentedchaos.charmofundyingreborn.platform.services.ICharmSlotHelper;
@@ -11,7 +11,7 @@ import top.theillusivec4.curios.api.SlotResult;
  * NeoForge implementation of ICharmSlotHelper using Curios API.
  * Uses findFirstCurio() to search all curio slots for totem items.
  */
-public class NeoForgeCharmSlotHelper implements ICharmSlotHelper {
+public class CuriosCharmSlotHelper implements ICharmSlotHelper {
 
     @Override
     public String getPlatformName() {

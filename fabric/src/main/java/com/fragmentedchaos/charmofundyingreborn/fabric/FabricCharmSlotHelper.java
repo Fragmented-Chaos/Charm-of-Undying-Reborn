@@ -1,4 +1,4 @@
-package com.fragmentedchaos.charmofundyingreborn.platform;
+package com.fragmentedchaos.charmofundyingreborn.fabric;
 
 import com.fragmentedchaos.charmofundyingreborn.Constants;
 import com.fragmentedchaos.charmofundyingreborn.common.TotemHelper;
