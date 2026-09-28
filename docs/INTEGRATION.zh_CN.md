@@ -229,7 +229,7 @@ public final class YourTotemListener {
 
 ## 五、运行前置
 
-Charm of Undying: Reborn 运行期需要 Fabric 端的 **Trinkets** 或 NeoForge 端的 **Curios**。
+Charm of Undying: Reborn 运行期需要一个饰品模组：Fabric 端为 **Trinkets Updated**，NeoForge 端为 **Curios** 或 **Trinkets Updated**（任选其一即可；两者都装时不会被禁用任何一方，取第一个放有图腾的槽位）。
 
 ---
 

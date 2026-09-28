@@ -4,7 +4,7 @@
 
 ## ✨ 功能
 
-- 🔮 **护符槽**：通过饰品槽（Fabric: Trinkets / NeoForge: Curios）装备不死图腾
+- 🔮 **护符槽**：通过饰品槽（Fabric: Trinkets / NeoForge: Curios API 或 Trinkets）装备不死图腾
 - 🏷️ **标签兼容**：基于 `c:totems` 标签识别图腾，任何标注此标签的物品均可使用
 
 ## 📦 安装
@@ -14,11 +14,11 @@
 | 平台 | 前置模组                                                                                                           |
 |------|----------------------------------------------------------------------------------------------------------------|
 | Fabric | [Fabric API](https://github.com/FabricMC/fabric-api) + [Trinkets Updated ](https://github.com/Patbox/trinkets) |
-| NeoForge | [Curios API](https://github.com/TheIllusiveC4/Curios)                                                                  |
-
+| NeoForge | [Curios API](https://github.com/TheIllusiveC4/Curios) 或 [Trinkets Updated](https://github.com/Patbox/trinkets)（任选其一）                                          |
+注：该分支26.1版本NeoForge端不要使用Trinkets Updated作为前置，虽然Trinkets Updated版本标注支持26.1（26.1.1/26.1.2版本不知道是否也有不问题~~懒得测试而已~~）
 ### 下载
 
-1. 选择对应平台的 JAR 文件
+1. 下载 JAR 文件（Fabric 与 NeoForge 通用）
 2. 放入 `mods` 文件夹
 3. 启动游戏
 
