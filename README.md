@@ -4,7 +4,7 @@
 
 ## ✨ 功能
 
-- 🔮 **护符槽**：通过饰品槽（Fabric: Trinkets / NeoForge: Curios）装备不死图腾
+- 🔮 **护符槽**：通过饰品槽（Fabric: Trinkets / NeoForge: Curios API 或 Trinkets）装备不死图腾
 - 🏷️ **标签兼容**：基于 `c:totems` 标签识别图腾，任何标注此标签的物品均可使用
 
 ## 📦 安装
@@ -18,7 +18,7 @@
 
 ### 下载
 
-1. 选择对应平台的 JAR 文件
+1. 下载 JAR 文件（Fabric 与 NeoForge 通用）
 2. 放入 `mods` 文件夹
 3. 启动游戏
 
