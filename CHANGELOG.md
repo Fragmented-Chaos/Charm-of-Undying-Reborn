@@ -1,5 +1,14 @@
 # 更新日志
 
+## 1.1.0-alpha.2
+
+### 变更
+- NeoForge：饰品前置现在支持 **Curios API 或 Trinkets Updated** 任选其一。
+- 同一个 jar 文件同时支持 Fabric 与 NeoForge。
+
+
+---
+
 ## 1.1.0-alpha.1
 
 ### 26.3 支持
