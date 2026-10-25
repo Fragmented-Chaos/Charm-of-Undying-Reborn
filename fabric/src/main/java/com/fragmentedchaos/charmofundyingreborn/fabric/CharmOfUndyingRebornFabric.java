@@ -12,21 +12,14 @@ import dev.yumi.commons.TriState;
 import eu.pb4.trinkets.api.event.TrinketSlotCompatibilityCallback;
 import net.fabricmc.api.ModInitializer;
 
-/**
- * Fabric entry point for Charm of Undying: Reborn.
- * <p>
- * Named {@code ...Fabric} so that it can live next to the NeoForge {@code @Mod} class inside the
- * universal jar (both loaders read their own metadata from that one file). Death handling is
- * managed via CharmSlotTotemMixin.
- */
+/** Fabric 入口点。类名带 Fabric 后缀是为了和 NeoForge 的 @Mod 类共存于同一个通用单包。 */
 public class CharmOfUndyingRebornFabric implements ModInitializer {
 
     @Override
     public void onInitialize() {
         Constants.LOG.info("Starting {} on Fabric by {}", Constants.MOD_NAME, Constants.MOD_AUTHORS);
 
-        // The universal jar contains both loaders' implementations, so this side installs its own
-        // instead of relying on META-INF/services.
+        // 通用单包装了 compat 两端的实现，这里安装 Fabric 自己那份。
         CharmSlotServices.install(
                 new TrinketsCharmSlotHelper(),
                 new FabricNetworkHelper(),
@@ -34,10 +27,8 @@ public class CharmOfUndyingRebornFabric implements ModInitializer {
 
         CharmOfUndyingRebornCommon.init();
 
-        // Register payload type on both sides (server sends, client receives)
         CharmSlotServices.network().registerPayloadType();
 
-        // Make totem items compatible with all trinket slots
         TrinketSlotCompatibilityCallback.EVENT.register(
                 (stack, slotAccess, entity, isEquipped) ->
                         TotemHelper.isTotem(stack) ? TriState.TRUE : TriState.DEFAULT

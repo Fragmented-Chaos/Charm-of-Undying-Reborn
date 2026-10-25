@@ -17,17 +17,11 @@ import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.client.ICurioRenderer;
 
 /**
- * Renders a Totem of Undying (any item in the {@code c:totems} tag) as a small 3D model on the
- * player's body when it is equipped in a Curios "charm" slot.
- *
- * <p>Placement is ported from the reference mod {@code charmofundying-1.21.x}
- * ({@code client/TotemRenderer} + {@code CurioTotemRenderer}): translate to the body
- * ({@code 0, 0.2, -0.15}), uniform scale {@code 0.35}, orient with
- * {@link Direction#DOWN}, and render with {@link ItemDisplayContext#NONE}.
- *
- * <p>The actual model draw uses the Minecraft 26.1 item pipeline
- * ({@link ItemModelResolver} + {@link ItemStackRenderState#submit}) because the classic
- * {@code ItemRenderer.renderStatic(...)} API no longer exists in this version.
+ * 把护符槽里的图腾渲染成身上的小 3D 模型。
+ * <p>
+ * 位置/缩放/朝向沿用 charmofundying-1.21.x 的数值；绘制走 26.1 的
+ * {@link ItemModelResolver} + {@link ItemStackRenderState#submit} 流程，因为旧的
+ * {@code ItemRenderer.renderStatic} 已经不存在了。
  */
 public class TotemCurioRenderer implements ICurioRenderer {
 
@@ -48,7 +42,6 @@ public class TotemCurioRenderer implements ICurioRenderer {
             return;
         }
 
-        // Resolve the item's baked 3D model into a render state using the new item pipeline.
         ItemModelResolver resolver = context.getItemModelResolver();
         ItemStackRenderState itemState = new ItemStackRenderState();
         resolver.updateForTopItem(
@@ -63,11 +56,9 @@ public class TotemCurioRenderer implements ICurioRenderer {
             return;
         }
 
-        // Placement ported from charmofundying-1.21.x: a small charm on the body, oriented down.
-        // NOTE: visual/tunable values; adjust to taste for a specific totem model.
+        // 可调参数：想让图腾换个位置或大小就改这里。
         poseStack.pushPose();
         poseStack.translate(0.0F, 0.2F, -0.15F);
-        // 26.3 removed mulPose(Quaternionf); rotate(Quaternionfc) is the replacement.
         poseStack.rotate(Direction.DOWN.getRotation());
         poseStack.scale(0.35F, 0.35F, 0.35F);
         itemState.submit(poseStack, submitNodeCollector, packedLight, OverlayTexture.NO_OVERLAY,

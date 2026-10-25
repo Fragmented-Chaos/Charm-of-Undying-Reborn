@@ -5,22 +5,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Platform hook that lets other mods veto a charm-slot resurrection.
- * <p>
- * NeoForge fires {@code LivingUseTotemEvent} from inside vanilla's {@code InteractionHand} loop, so
- * it only covers hand-held totems. This mod short-circuits that loop before it runs, which would
- * otherwise let players bypass every mod that cancels the event. Implementing this service restores
- * the same veto for the charm slot.
- * <p>
- * Fabric has no equivalent event, so its implementation always allows the use.
+ * 让其它模组能否决护符槽复活。
+ * NeoForge 的 LivingUseTotemEvent 只在原版手牌循环里触发，而本模组会短路那个循环，所以这里补一次。
+ * Fabric 没有对应事件，实现恒为 true。
  */
 public interface ITotemUseGuard {
 
-    /**
-     * @param player       the player about to be saved
-     * @param stack        the totem stack found in the charm slot
-     * @param damageSource the damage that would have killed the player
-     * @return true if the resurrection may proceed
-     */
+    /** @return true 表示允许这次复活 */
     boolean allowTotemUse(Player player, ItemStack stack, DamageSource damageSource);
 }

@@ -11,11 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import java.util.function.Consumer;
 
 /**
- * Trinkets Updated implementation of {@link ICharmSlotHelper}.
- * <p>
- * Lives in {@code common} because Trinkets is a multiloader mod: the very same API (backed by Yumi)
- * is available on Fabric and on NeoForge, so both loaders share this implementation. It searches
- * every trinket inventory for a totem, which is how the Fabric side has always worked.
+ * Trinkets 实现。放在 common 是因为 Trinkets 本身是多加载器模组，两端共用同一套 API。
+ * 查找范围是全部 trinket 背包，不只 charm 槽。
  */
 public class TrinketsCharmSlotHelper implements ICharmSlotHelper {
 
@@ -60,8 +57,7 @@ public class TrinketsCharmSlotHelper implements ICharmSlotHelper {
                     ItemStack stack = inv.getItem(i);
                     if (TotemHelper.isTotem(stack)) {
                         action.accept(stack);
-                        // Trinkets hands out the live stack, but write it back anyway so this keeps
-                        // working if it ever switches to snapshots the way Curios 17 did.
+                        // Trinkets 返回的是活对象，写回只是防御性处理（Curios 那边必须写回）。
                         inv.setItem(i, stack);
                         return;
                     }

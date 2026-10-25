@@ -14,26 +14,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
- * NeoForge charm slot provider accepting <b>either</b> Curios or Trinkets Updated.
- * <p>
- * Both are declared optional in neoforge.mods.toml (NeoForge cannot express "one of"), so the
- * provider is picked at runtime:
- * <ul>
- *   <li>only Curios &rarr; Curios</li>
- *   <li>only Trinkets Updated &rarr; Trinkets</li>
- *   <li>both &rarr; {@link CompositeCharmSlotHelper}: neither provider is disabled, both keep their
- *       slots, and the first slot that actually holds a totem is used</li>
- *   <li>neither &rarr; the charm slot stays inactive (startup already reported a loading error; this
- *       is only a safety net)</li>
- * </ul>
- * The delegate is resolved on first use, so the Curios classes are only loaded when Curios is
- * really present.
+ * NeoForge 的槽位提供者：Curios 或 Trinkets 二选一，两个都在时两者并存。
+ * 委托对象在首次使用时才解析，这样没装 Curios 的实例不会加载 Curios 的类。
  */
 public class NeoForgeCharmSlotHelper implements ICharmSlotHelper {
 
-    /** Mod id of the Curios accessory provider. */
     public static final String CURIOS = "curios";
-    /** Mod id of the Trinkets Updated accessory provider. */
     public static final String TRINKETS = "trinkets_updated";
 
     private static final AtomicBoolean MISSING_WARNING_LOGGED = new AtomicBoolean();
@@ -93,8 +79,7 @@ public class NeoForgeCharmSlotHelper implements ICharmSlotHelper {
                     + "(both slots stay usable; the first slot holding a totem wins)");
             return new CompositeCharmSlotHelper(providers);
         }
-        // Defensive only: CharmOfUndyingReborn already reports a loading error when neither mod is
-        // present, so startup normally never gets this far.
+        // 兜底：入口点已经报过加载错误，正常走不到这里。
         if (MISSING_WARNING_LOGGED.compareAndSet(false, true)) {
             Constants.LOG.warn("Neither Curios API nor Trinkets Updated is installed, so the charm slot "
                     + "stays inactive. Install one of them to enable it.");
@@ -102,7 +87,7 @@ public class NeoForgeCharmSlotHelper implements ICharmSlotHelper {
         return InactiveCharmSlotHelper.INSTANCE;
     }
 
-    /** Used when no supported accessory mod is installed. */
+    /** 没有任何支持的饰品模组时使用。 */
     private static final class InactiveCharmSlotHelper implements ICharmSlotHelper {
 
         static final InactiveCharmSlotHelper INSTANCE = new InactiveCharmSlotHelper();
@@ -124,7 +109,6 @@ public class NeoForgeCharmSlotHelper implements ICharmSlotHelper {
 
         @Override
         public void modifyCharmSlot(Player player, Consumer<ItemStack> action) {
-            // nothing to modify
         }
     }
 }

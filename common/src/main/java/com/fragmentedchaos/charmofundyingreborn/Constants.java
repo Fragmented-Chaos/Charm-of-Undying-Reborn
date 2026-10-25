@@ -3,10 +3,7 @@ package com.fragmentedchaos.charmofundyingreborn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Shared constants for Charm of Undying: Reborn.
- * Mod ID, name, and authors are populated at build time via gradle.properties expansion.
- */
+/** 常量。模组 id、名称、作者在构建时由 gradle.properties 展开。 */
 public final class Constants {
 
     public static final String MOD_ID = "charmofundyingreborn";
