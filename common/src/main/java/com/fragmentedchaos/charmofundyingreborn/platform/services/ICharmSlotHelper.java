@@ -7,47 +7,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-/**
- * Platform-abstracted service for accessing the "charm" accessory slot.
- * Fabric uses Trinkets, NeoForge uses Curios — the common code works
- * with this interface regardless of platform.
- */
+/** 平台无关的护符槽访问：Fabric 用 Trinkets，NeoForge 用 Curios 或 Trinkets。 */
 public interface ICharmSlotHelper {
 
-    /**
-     * Gets the name of the platform providing the charm slot.
-     *
-     * @return Platform name (e.g. "Trinkets" or "Curios")
-     */
     String getPlatformName();
 
-    /**
-     * Retrieves the item currently in the player's charm slot.
-     *
-     * @param player The player to query
-     * @return The ItemStack in the charm slot, or ItemStack.EMPTY if none / slot unavailable
-     */
+    /** 槽位里的物品；没有槽位或槽位为空时返回 EMPTY。 */
     @Nullable
     ItemStack getCharmSlot(Player player);
 
-    /**
-     * Checks whether the player has a charm slot available.
-     *
-     * @param player The player to check
-     * @return true if the charm slot exists and is accessible
-     */
     boolean hasCharmSlot(Player player);
 
     /**
-     * Applies {@code action} to the totem in the charm slot and writes the result back into the
-     * same slot.
-     * <p>
-     * Needed because a platform may hand out a detached copy: Curios 17 on NeoForge rebuilds an
-     * {@link ItemStack} from its resource handler on every read, so mutating the stack returned by
-     * {@link #getCharmSlot(Player)} would not touch the real inventory.
-     *
-     * @param player The player whose charm slot holds the totem
-     * @param action Receives the stack to modify; emptying it removes the totem
+     * 修改槽位里的物品并写回。
+     * 必须写回是因为 Curios 17 每次读取都重建 ItemStack，直接改返回值落不进背包。
      */
     void modifyCharmSlot(Player player, Consumer<ItemStack> action);
 }

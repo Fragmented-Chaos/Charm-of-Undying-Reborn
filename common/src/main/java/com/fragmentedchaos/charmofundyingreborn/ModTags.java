@@ -5,16 +5,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
-/**
- * Central tag definitions for identifying totems of undying.
- * Uses the Convention tag "c:totems" as the primary compatibility mechanism.
- */
+/** 图腾判定用的标签：约定标签 {@code c:totems}。 */
 public final class ModTags {
 
-    /**
-     * Convention item tag for totems of undying.
-     * Any item in this tag will be treated as a valid totem by the mod.
-     */
     public static final TagKey<Item> TOTEMS = TagKey.create(
             Registries.ITEM,
             Identifier.parse("c:totems")

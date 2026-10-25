@@ -13,17 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Registers a dynamic {@link ICurioItem} on every item that carries the {@code c:totems} tag, so
- * totems can be auto-equipped from the hotbar (right-click). Only totem items are registered, so
- * other mods' items are never intercepted or overridden.
- * <p>
- * Only touched when Curios is loaded (curios is optional now that Trinkets Updated can provide the
- * slot too). Trinkets needs no registration: its slots are declared by data files shipped in
- * {@code common/src/main/resources/data/trinkets}.
- * <p>
- * Note: {@code canEquipFromUse} deliberately returns true. Curios 17.0.0-beta leaks a root
- * transaction in that code path (CuriosCommonEvents#curioRightClick line 372) when the target slot
- * is occupied; that is a Curios bug, tracked upstream.
+ * 给所有带 {@code c:totems} 标签的物品注册动态 {@link ICurioItem}，让图腾能右键直接装进槽位。
+ * Trinkets 不需要这一步，它的槽位与标签都是数据文件。
  */
 public final class CuriosTotemRegistration {
 
@@ -33,7 +24,7 @@ public final class CuriosTotemRegistration {
     private CuriosTotemRegistration() {
     }
 
-    /** Idempotent: each item is registered at most once. */
+    /** 幂等：每个物品只注册一次。 */
     public static void registerTotemCurios() {
         for (Item item : BuiltInRegistries.ITEM) {
             if (TotemHelper.isTotem(item.getDefaultInstance()) && REGISTERED_CURIO_ITEMS.add(item)) {
@@ -44,10 +35,7 @@ public final class CuriosTotemRegistration {
         }
     }
 
-    /**
-     * Dynamic {@link ICurioItem}: only totem stacks (tag OR config) report a curio capability.
-     * Evaluated at runtime so config reloads take effect immediately.
-     */
+    /** canEquipFromUse 恒为 true：Curios 17.0.0-beta 在目标槽已占用时会漏 root transaction（上游 bug）。 */
     private static class TotemCurioItem implements ICurioItem {
 
         @Override

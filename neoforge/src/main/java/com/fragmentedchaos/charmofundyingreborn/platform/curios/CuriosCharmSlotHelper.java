@@ -10,13 +10,7 @@ import top.theillusivec4.curios.api.SlotResult;
 
 import java.util.function.Consumer;
 
-/**
- * Curios implementation of {@link ICharmSlotHelper}. Uses findFirstCurio() to search all curio
- * slots for totem items.
- * <p>
- * Only ever instantiated when Curios is loaded, so no Curios class is resolved on a NeoForge
- * instance that uses Trinkets Updated instead.
- */
+/** Curios 实现：在所有 curio 槽里找图腾。只在 Curios 存在时实例化。 */
 public class CuriosCharmSlotHelper implements ICharmSlotHelper {
 
     @Override
@@ -42,8 +36,7 @@ public class CuriosCharmSlotHelper implements ICharmSlotHelper {
     public void modifyCharmSlot(Player player, Consumer<ItemStack> action) {
         CuriosApi.getCuriosInventory(player).ifPresent(inv ->
                 inv.findFirstCurio(TotemHelper::isTotem).ifPresent(result -> {
-                    // Curios 17 backs its slots with NeoForge's transfer API and builds a fresh
-                    // ItemStack on every read, so the modified stack must be written back explicitly.
+                    // Curios 17 每次读取都重建 ItemStack，改完必须写回。
                     ItemStack stack = result.stack();
                     action.accept(stack);
                     SlotContext context = result.slotContext();

@@ -14,10 +14,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 
 import java.util.Optional;
 
-/**
- * Shared death handling. Phase 1 checks existence; Phase 2 consumes and activates
- * using an optional {@link ITotemEffect} provider for custom totem behavior.
- */
+/** 护符槽图腾的判定与消耗。 */
 public final class DeathEventHandler {
 
     private DeathEventHandler() {
@@ -37,12 +34,9 @@ public final class DeathEventHandler {
     }
 
     /**
-     * Consume and activate the totem in the charm slot.
-     * Looks up an {@link ITotemEffect} provider for the item;
-     * falls back to vanilla behavior if none registered.
+     * 消耗并激活护符槽图腾。
      *
-     * @param damageSource the damage that would have killed the player, forwarded to the
-     *                     platform totem-use guard so other mods can veto the resurrection
+     * @param damageSource 致死伤害，透传给平台否决钩子
      */
     public static boolean consumeAndActivate(Player player, DamageSource damageSource) {
         if (player == null || player.isRemoved()) return false;
@@ -50,8 +44,7 @@ public final class DeathEventHandler {
             ItemStack stack = CharmSlotServices.charmSlot().getCharmSlot(player);
             if (stack == null || stack.isEmpty() || !TotemHelper.isTotem(stack)) return false;
 
-            // Give other mods the same veto they get for a hand-held totem. Vanilla only offers it
-            // inside its InteractionHand loop, which this mixin short-circuits before reaching.
+            // 手牌路径里其它模组能拿到 LivingUseTotemEvent，护符槽短路了那段，这里补一次。
             ITotemUseGuard guard = CharmSlotServices.totemGuard();
             if (guard != null && !guard.allowTotemUse(player, stack, damageSource)) return false;
 
@@ -59,23 +52,16 @@ public final class DeathEventHandler {
             ITotemEffect effect = provider.orElse(TotemProviders.VANILLA);
 
             ItemStack copy = stack.copy();
-            // Vanilla sets health before running the item's death effects.
             player.setHealth(1.0F);
             boolean ok = effect.applyEffects(player, copy);
             if (ok) {
-                // Consume only after the effects actually applied, so a failing effect (a custom
-                // ITotemEffect, or a ConsumeEffect from the item's data that throws) cannot leave
-                // the player dead with the totem already gone.
-                // The platform writes the result back into its slot: Curios 17 hands out a fresh
-                // stack per read, so mutating the stack from getCharmSlot() alone does not persist.
+                // 先确认效果生效再扣图腾，避免自定义效果失败时玩家已死、图腾也没了。
+                // 必须走 modifyCharmSlot：Curios 17 每次读取都重建 ItemStack。
                 CharmSlotServices.charmSlot().modifyCharmSlot(player, effect::modifyStack);
                 player.level().broadcastEntityEvent(player, (byte) 35);
                 if (player instanceof ServerPlayer sp) {
-                    // Vanilla emits this so sculk sensors / wardens notice the totem being used.
                     copy.causeUseVibration(player, GameEvent.ITEM_INTERACT_FINISH);
                     CharmSlotServices.network().sendTotemUse(sp, copy);
-                    // Match vanilla totem behavior: award the "item used" stat and fire the
-                    // "Totem of Undying" advancement (used_totem).
                     sp.awardStat(Stats.ITEM_USED.get(copy.getItem()), 1);
                     CriteriaTriggers.USED_TOTEM.trigger(sp, copy);
                 }

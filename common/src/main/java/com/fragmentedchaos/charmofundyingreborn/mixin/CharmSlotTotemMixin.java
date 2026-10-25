@@ -11,17 +11,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Mixin that intercepts {@link LivingEntity#checkTotemDeathProtection(DamageSource)}
- * to allow totems in charm accessory slots to trigger the vanilla resurrection.
+ * 让护符槽里的图腾参与 {@code LivingEntity#checkTotemDeathProtection}。
  * <p>
- * Uses a two-phase injection to match vanilla behavior:
- * <ol>
- *   <li><b>HEAD</b>: Find totem from charm slot and store it (do NOT consume yet)</li>
- *   <li><b>INVOKE Hands.values()</b>: After vanilla's invulnerability check passes,
- *       consume the stored totem and signal success</li>
- * </ol>
- * This ensures that damage types which bypass invulnerability (like /kill and void)
- * are NOT blocked by charm slot totems, matching vanilla hand-held totem behavior.
+ * 两步注入：HEAD 只查存在，走到 {@code InteractionHand.values()} 之前才消耗并返回成功。
+ * 该位置在原版无敌检查之后，所以 /kill 与虚空照旧无视护符槽图腾；
+ * 同时它也在原版手牌循环之前，所以护符槽会比手持图腾先被消耗。
  */
 @Mixin(LivingEntity.class)
 public abstract class CharmSlotTotemMixin {
@@ -29,10 +23,6 @@ public abstract class CharmSlotTotemMixin {
     @Unique
     private boolean charmofundyingreborn$totemFound;
 
-    /**
-     * Phase 1: At HEAD, find totem from charm slot but do not consume.
-     * Sets {@code totemFound} flag to true if a totem exists.
-     */
     @Inject(
             method = "checkTotemDeathProtection",
             at = @At("HEAD")
@@ -45,15 +35,10 @@ public abstract class CharmSlotTotemMixin {
         charmofundyingreborn$totemFound = false;
 
         if (self instanceof Player player && !player.level().isClientSide()) {
-            // Phase 1: only check existence — do NOT consume
             charmofundyingreborn$totemFound = DeathEventHandler.hasTotemInCharm(player);
         }
     }
 
-    /**
-     * Phase 2: After vanilla passes the BYPASSES_INVULNERABILITY check,
-     * consume the previously found totem and signal success.
-     */
     @Inject(
             method = "checkTotemDeathProtection",
             at = @At(
