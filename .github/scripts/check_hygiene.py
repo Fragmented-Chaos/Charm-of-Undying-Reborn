@@ -63,12 +63,7 @@ for path in files:
         if m:
             problems.append(f"{rel}:{i} {m.group(1)} 没有说明（写成 TODO(原因) 或 FIXME(原因)）")
 
-        # ③ 空的 catch 块：最常见的"吞异常"。
-        #    catch 和 { 和 } 经常分三行写，所以要跨行匹配。
-        if re.search(r"catch\s*\([^)]*\)\s*\{[\s\n]*\}", text):
-            # 只在 catch 所在的那一行报一次，避免同一个块被报多次
-            if re.search(r"catch\s*\(", line):
-                problems.append(f"{rel}:{i} 空的 catch 块（吞异常）")
+
 
         # ④ 硬编码本机路径
         if re.search(r"[A-Za-z]:\\\\|[A-Za-z]:/Users/|/home/[a-z]", line):
@@ -84,6 +79,15 @@ for path in files:
         head = "\n".join(lines[:6])
         if not re.search(r"SPDX-License-Identifier|Copyright|License", head):
             warnings.append(f"{rel} 缺许可证头（改动过的文件才要求）")
+
+    # ③ 空的 catch 块：最常见的"吞异常"。
+    #    必须逐个块判断：早先的写法是"全文搜到一次空 catch 就逐行报"，
+    #    结果同一个文件里后面那些写了日志的 catch 也会被误报。
+    for m in re.finditer(r"catch\s*\([^)]*\)\s*\{([^{}]*)\}", text):
+        if m.group(1).strip():
+            continue
+        line_no = text.count("\n", 0, m.start()) + 1
+        problems.append(f"{rel}:{line_no} 空的 catch 块（吞异常）")
 
 print(f"  Java 文件：{len(files)}")
 if warnings:
