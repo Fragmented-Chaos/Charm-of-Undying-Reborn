@@ -1,0 +1,108 @@
+name: review
+
+# PR 守卫 + AI 代码审查。
+#
+# 为什么这样拆：
+#   - 构建和元数据检查是"确定性"的，失败就该挡住合并，所以单独一个 job；
+#   - AI 审查慢、会误报，所以放在单独 job，只在有 key 时跑，且不阻塞合并
+#     （用 continue-on-error，结果以 PR 评论的形式给人看）。
+#
+# 需要的 secret（可选）：
+#   DEEPSEEK_API_KEY —— 没配的话 AI job 直接跳过，其余全部照常。
+
+# 触发范围按仓库真实分支来（这里没有 dev 分支）：
+#   - PR：主干 main、26.1/26.2 维护线、以及审查机器人自己的分支
+#   - push：只在这些长期分支上跑，避免每次提交都构建
+on:
+  pull_request:
+    branches: ["main", "26.1.x/26.2", "ci/review-bot"]
+  push:
+    branches: ["main", "26.1.x/26.2", "ci/review-bot"]
+  workflow_dispatch:
+
+concurrency:
+  group: review-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  # ---------------- A. 确定性检查 ----------------
+  guard:
+    name: 构建与元数据
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 设置 JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: 设置 Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: 元数据一致性（版本号 / id / 许可证 / 依赖）
+        run: python3 .github/scripts/check_metadata.py
+
+      - name: 代码卫生（调试输出 / TODO / 许可证头）
+        run: python3 .github/scripts/check_hygiene.py
+
+      - name: 构建两端
+        run: ./gradlew build --stacktrace
+
+      - name: 产物检查（Fabric 与 NeoForge 都要出 jar）
+        run: python3 .github/scripts/check_artifacts.py
+
+      - name: 汇总
+        if: always()
+        run: |
+          echo "构建目录："
+          find . -name '*.jar' -not -path './.gradle/*' -not -path '*/runs/*' | sort || true
+
+  # ---------------- B. AI 代码审查 ----------------
+  ai-review:
+    name: AI 代码审查
+    runs-on: ubuntu-latest
+    needs: guard
+    # 只在 PR 上跑；没配 key 时整段跳过
+    if: github.event_name == 'pull_request'
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 检查是否配置了 API key
+        id: keycheck
+        run: |
+          if [ -n "${{ secrets.DEEPSEEK_API_KEY }}" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::没有配置 DEEPSEEK_API_KEY，跳过 AI 审查"
+          fi
+
+      - name: 运行 AI 审查
+        if: steps.keycheck.outputs.available == 'true'
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: python3 .github/scripts/ai_review.py
+
+      - name: 发表评论
+        if: steps.keycheck.outputs.available == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [ -f review.md ]; then
+            # 已有多条评论时只更新自己的那一条，避免每次 push 刷屏
+            gh pr comment "$PR_NUMBER" --body-file review.md --edit-last --create-if-none
+          fi

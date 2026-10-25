@@ -22,3 +22,6 @@ build
 eclipse
 run
 runs
+
+# review 机器人生成的临时文件
+review.md
