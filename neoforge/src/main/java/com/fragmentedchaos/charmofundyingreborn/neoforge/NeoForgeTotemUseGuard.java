@@ -8,14 +8,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.CommonHooks;
 
 /**
- * NeoForge implementation of {@link ITotemUseGuard}.
- * <p>
- * Fires NeoForge's {@code LivingUseTotemEvent} for a charm-slot totem, so mods that veto totem use
- * (disabled dimensions, boss fights, hardcore rules, ...) apply here exactly as they do for a
- * hand-held totem.
- * <p>
- * The event carries an {@link InteractionHand}; a charm slot has no hand, so the main hand is the
- * closest available stand-in.
+ * 把 NeoForge 的 LivingUseTotemEvent 补到护符槽上。
+ * 护符槽没有手，事件要一个 InteractionHand，用主手代替。
  */
 public class NeoForgeTotemUseGuard implements ITotemUseGuard {
 

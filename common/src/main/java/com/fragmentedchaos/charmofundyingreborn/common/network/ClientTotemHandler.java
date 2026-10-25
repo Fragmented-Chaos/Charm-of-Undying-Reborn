@@ -3,10 +3,7 @@ package com.fragmentedchaos.charmofundyingreborn.common.network;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 
-/**
- * Client-side handler for TotemUsePayload.
- * Renders the totem activation animation with the specific item icon.
- */
+/** 客户端处理图腾复活包，播第一人称的图腾动画。 */
 public final class ClientTotemHandler {
 
     private ClientTotemHandler() {}
@@ -16,10 +13,7 @@ public final class ClientTotemHandler {
         if (mc.level == null) return;
 
         Entity entity = mc.level.getEntity(payload.entityId());
-        // The payload is broadcast to every tracking client, but the activation animation is a
-        // first-person overlay. Vanilla scopes it the same way in
-        // ClientPacketListener#handleEntityEvent (case 35): only when the affected entity is the
-        // local player. Without this check, another player's totem would pop up on your screen.
+        // 包里广播给了所有追踪该玩家的客户端，但动画是第一人称的，只在本地玩家时播。
         if (entity == mc.player) {
             mc.gameRenderer.displayItemActivation(payload.stack());
         }

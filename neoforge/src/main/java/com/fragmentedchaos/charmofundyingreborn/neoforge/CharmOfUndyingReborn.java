@@ -17,12 +17,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 
-/**
- * NeoForge entry point for Charm of Undying: Reborn.
- * <p>
- * The charm slot works with either Curios or Trinkets Updated; the provider is chosen at runtime in
- * {@link NeoForgeCharmSlotHelper}. Death handling is managed via CharmSlotTotemMixin.
- */
+/** NeoForge 入口点。死亡处理由 CharmSlotTotemMixin 完成。 */
 @Mod(Constants.MOD_ID)
 public class CharmOfUndyingReborn {
 
@@ -31,7 +26,7 @@ public class CharmOfUndyingReborn {
 
         requireAccessoryProvider(container);
 
-        // The universal jar ships both loaders' implementations; install this side's services.
+        // 通用单包里同时有两端的实现，各自安装自己那份。
         CharmSlotServices.install(
                 new NeoForgeCharmSlotHelper(),
                 new NeoForgeNetworkHelper(),
@@ -39,22 +34,14 @@ public class CharmOfUndyingReborn {
 
         CharmOfUndyingRebornCommon.init();
         eventBus.addListener(NeoForgeNetworkHelper::onRegisterPayloads);
-        // Register totem ICurioItems only once the server is fully started: creating default
-        // ItemStacks requires DataComponents to be bound and item tags to be loaded, which is
-        // guaranteed at this point. Skipped when Curios is absent - Trinkets Updated needs no
-        // registration because its slots and item tags are plain data files.
+        // 等到服务端启动后才注册 ICurioItem：那时 DataComponents 和物品标签才都可用。
         NeoForge.EVENT_BUS.addListener(CharmOfUndyingReborn::onServerStarted);
         ChorCommand.register();
 
         Constants.LOG.info("{} successfully initialized on NeoForge", Constants.MOD_NAME);
     }
 
-    /**
-     * Both accessory mods are declared {@code optional} in neoforge.mods.toml because NeoForge has
-     * no way to express "one of", so the requirement is enforced here instead: without Curios or
-     * Trinkets Updated there is no charm slot at all, and silently degrading would just look like a
-     * broken mod. Reported as a loading error, which aborts startup with a readable message.
-     */
+    /** Curios 与 Trinkets 在 toml 里都只能标 optional，所以"至少要有一个"在这里强制。 */
     private static void requireAccessoryProvider(ModContainer container) {
         if (ModList.get().isLoaded(NeoForgeCharmSlotHelper.CURIOS)
                 || ModList.get().isLoaded(NeoForgeCharmSlotHelper.TRINKETS)) {
