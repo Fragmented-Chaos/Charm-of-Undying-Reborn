@@ -8,14 +8,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DeathProtection;
 
 /**
- * Default totem effect.
+ * 默认图腾效果。
  * <p>
- * Prefers the item's own {@link DeathProtection} data component — the mechanism vanilla has used
- * since 26.1 — so that every {@code c:totems} item describes its own resurrection. This is what
- * makes custom totems (with their own {@code death_effects}) behave correctly instead of silently
- * receiving the vanilla totem's effects.
- * <p>
- * Falls back to the vanilla totem's effect list for tagged items that carry no such component.
+ * 优先用物品自带的 {@link DeathProtection} 数据组件，这样自定义图腾（自带 death_effects）会按自己的配置生效；
+ * 没有该组件的 {@code c:totems} 物品才退回原版图腾那套效果。
  */
 public class VanillaTotemEffect implements ITotemEffect {
 
@@ -35,12 +31,10 @@ public class VanillaTotemEffect implements ITotemEffect {
     public boolean applyEffects(Player player, ItemStack stack) {
         DeathProtection protection = stack.get(DataComponents.DEATH_PROTECTION);
         if (protection != null) {
-            // Let the item run its own death_effects, exactly as vanilla does.
             protection.applyEffects(stack, player);
             return true;
         }
 
-        // Fallback for items tagged c:totems that carry no DEATH_PROTECTION component.
         player.removeAllEffects();
         player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, REGEN_DURATION, REGEN_AMPLIFIER));
         player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, ABSORPTION_DURATION, ABSORPTION_AMPLIFIER));

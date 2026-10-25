@@ -7,13 +7,8 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 
 /**
- * Combines several accessory providers, for instances that have Curios and Trinkets Updated
- * installed side by side.
- * <p>
- * Nothing is hidden or disabled: both mods keep rendering and managing their own slots. For the
- * resurrection itself the providers are queried in order and the <b>first slot that actually holds
- * a totem</b> wins, so a single death still consumes exactly one totem no matter how many charm
- * slots exist.
+ * Curios 与 Trinkets 同时存在时合并两者。不隐藏任何一方的槽位，
+ * 复活时按顺序取第一个放着图腾的槽，保证一次死亡只消耗一个。
  */
 public final class CompositeCharmSlotHelper implements ICharmSlotHelper {
 

@@ -7,10 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
 
-/**
- * NeoForge implementation of ICharmSlotHelper using Curios API.
- * Uses findFirstCurio() to search all curio slots for totem items.
- */
+/** Curios 实现：用 findFirstCurio 在所有 curio 槽里找图腾。只在 Curios 存在时实例化。 */
 public class CuriosCharmSlotHelper implements ICharmSlotHelper {
 
     @Override

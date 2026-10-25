@@ -2,11 +2,7 @@ package com.fragmentedchaos.charmofundyingreborn;
 
 import com.fragmentedchaos.charmofundyingreborn.common.TotemProviders;
 
-/**
- * Common initialization entry point for Charm of Undying: Reborn.
- * Platform-specific entry points (Fabric ModInitializer / NeoForge @Mod)
- * call this to set up shared configuration.
- */
+/** 两端共用的初始化入口，由各加载器的入口点调用。 */
 public final class CharmOfUndyingRebornCommon {
 
     private static boolean initialized = false;

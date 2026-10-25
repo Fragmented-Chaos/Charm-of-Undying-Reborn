@@ -9,32 +9,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * Version-tolerant bridge to {@code CriteriaTriggers.USED_TOTEM}, so that a single jar can run on
- * both Minecraft 26.1 and 26.2.
- *
- * <p>Background: 26.2 reorganized {@code net.minecraft.advancements}. Criteria and triggers moved
- * from {@code net.minecraft.advancements} to {@code net.minecraft.advancements.triggers}, while
- * predicates moved to {@code net.minecraft.advancements.predicates}. The old location was
- * {@code net.minecraft.advancements.CriteriaTriggers}.
- *
- * <p>A static {@code import} can only name one of the two paths, so compiling against either one
- * produces a jar that fails on the other version with {@link NoClassDefFoundError} the first time
- * the death handler runs. Resolving the trigger reflectively at runtime keeps one artifact valid on
- * both versions.
- *
- * <p>This is safe in production: since Minecraft 26.1, Fabric no longer ships intermediary or Yarn
- * mappings (both stop at 1.21.11), so {@code net.minecraft.*} are the real runtime class names on
- * Fabric as well as on NeoForge. String constants therefore resolve without a mapping resolver.
- *
- * <p>Cost: resolution runs once per JVM — on the first charm-slot resurrection — and the result is
- * cached. Afterwards each activation is a single volatile read plus one {@code Method.invoke}, and
- * a failed lookup degrades to a debug log rather than an exception in the death path.
+ * 反射访问 {@code CriteriaTriggers.USED_TOTEM}，让同一个 jar 能在 26.1 与 26.2 上跑。
+ * <p>
+ * 26.2 把 criteria/trigger 移到了 {@code net.minecraft.advancements.triggers}，静态 import 只能绑一个路径；
+ * 而 26.1 起 Fabric 不再发 intermediary 映射，{@code net.minecraft.*} 就是运行时类名，所以字符串能直接解析。
+ * 只在一次 JVM 生命周期内解析一次，之后每次都是 volatile 读 + 一次反射调用。
  */
 public final class AdvancementCompat {
 
-    /**
-     * Known locations of {@code CriteriaTriggers}, newest first.
-     */
+    /** {@code CriteriaTriggers} 的已知位置，新版本在前。 */
     private static final String[] CRITERIA_TRIGGERS_CANDIDATES = {
             "net.minecraft.advancements.triggers.CriteriaTriggers", // 26.2+
             "net.minecraft.advancements.CriteriaTriggers"           // 26.1
@@ -43,11 +26,7 @@ public final class AdvancementCompat {
     private static final String TRIGGER_FIELD = "USED_TOTEM";
     private static final String TRIGGER_METHOD = "trigger";
 
-    /**
-     * Guards the one-time {@link #resolve()}. Volatile so that the common path in
-     * {@link #triggerUsedTotem} is a plain volatile read rather than a monitor enter/exit on every
-     * activation, and so that the resolved fields below are safely published.
-     */
+    /** 用 volatile 是为了让常见路径不每次进 monitor，同时安全发布下面两个字段。 */
     private static volatile boolean resolved;
 
     private static Object usedTotemTrigger;
@@ -57,20 +36,10 @@ public final class AdvancementCompat {
         throw new UnsupportedOperationException("AdvancementCompat cannot be instantiated");
     }
 
-    /**
-     * Fires the vanilla {@code minecraft:used_totem} advancement criterion.
-     *
-     * <p>Mirrors what {@code LivingEntity#checkTotemDeathProtection} does for a hand-held totem, so
-     * that a charm-slot resurrection grants the advancement identically.
-     *
-     * @param player the player being saved
-     * @param stack  the consumed totem stack
-     */
+    /** 触发原版 {@code minecraft:used_totem} 进度，效果等同手牌图腾。 */
     public static void triggerUsedTotem(ServerPlayer player, ItemStack stack) {
         if (player == null || stack == null || stack.isEmpty()) return;
 
-        // Fast path: a single volatile read. Resolution has already run by now in all but the
-        // very first activation of the JVM's lifetime.
         if (!resolved) resolve();
 
         Object trigger = usedTotemTrigger;
@@ -80,17 +49,14 @@ public final class AdvancementCompat {
         try {
             method.invoke(trigger, player, stack);
         } catch (Throwable t) {
-            // Never let an advancement lookup break the resurrection itself.
+            // 进度查不到也不能打断复活本身。
             Constants.LOG.warn("Could not trigger the used_totem advancement: {}", t.toString());
         }
     }
 
-    /**
-     * Resolves {@code CriteriaTriggers.USED_TOTEM} at most once, trying each known package
-     * location. Only ever entered while {@link #resolved} is false.
-     */
+    /** 最多解析一次，逐个尝试已知的包位置。 */
     private static synchronized void resolve() {
-        if (resolved) return; // another thread resolved it while we waited for the monitor
+        if (resolved) return;
 
         Object trigger = null;
         Method method = null;
@@ -102,15 +68,14 @@ public final class AdvancementCompat {
                 Object instance = field.get(null);
                 if (instance == null) continue;
 
-                // The trigger's own type moved packages too, so look the method up on the runtime
-                // instance rather than naming its type.
+                // trigger 自身的类型也换了包，所以在运行时实例上找方法，不写死类型。
                 method = instance.getClass()
                         .getMethod(TRIGGER_METHOD, ServerPlayer.class, ItemStack.class);
                 trigger = instance;
                 Constants.LOG.debug("Resolved used_totem trigger through {}", className);
                 break;
             } catch (Throwable ignored) {
-                // Try the next known location.
+                // 试下一个位置。
             }
         }
 
@@ -121,6 +86,6 @@ public final class AdvancementCompat {
 
         usedTotemTrigger = trigger;
         triggerMethod = method;
-        resolved = true; // volatile write: publishes the two fields above to other threads
+        resolved = true;
     }
 }

@@ -8,14 +8,7 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
-/**
- * Client-only setup. Registers the 3D totem renderer when Curios is installed.
- * <p>
- * Rendering is intentionally limited to the vanilla totem (no tag-based registration), keeping
- * client code minimal and avoiding any client-class-on-server concerns.
- * <p>
- * A Trinkets-side renderer is not registered yet; Trinkets Updated exposes its own rendering API.
- */
+/** 客户端初始化：装了 Curios 就注册图腾 3D 渲染器（只针对原版图腾）。 */
 @EventBusSubscriber(modid = Constants.MOD_ID, value = Dist.CLIENT)
 public final class ClientSetup {
 

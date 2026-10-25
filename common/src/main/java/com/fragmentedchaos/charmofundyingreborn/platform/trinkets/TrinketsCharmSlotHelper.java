@@ -9,11 +9,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Trinkets Updated implementation of {@link ICharmSlotHelper}.
- * <p>
- * Lives in {@code common} because Trinkets is a multiloader mod: the very same API (backed by Yumi)
- * is available on Fabric and on NeoForge, so the NeoForge provider dispatcher shares it. It searches
- * every trinket inventory for a totem, which is how the Fabric side has always worked.
+ * Trinkets 实现。放在 common 是因为 Trinkets 是多加载器模组，两端共用同一套 API。
+ * 查找范围是全部 trinket 背包。
  */
 public class TrinketsCharmSlotHelper implements ICharmSlotHelper {
 

@@ -4,12 +4,7 @@ import com.fragmentedchaos.charmofundyingreborn.platform.curios.client.TotemCuri
 import net.minecraft.world.item.Items;
 import top.theillusivec4.curios.api.client.ICurioRenderer;
 
-/**
- * Curios-only client setup: registers the 3D totem renderer for the vanilla totem of undying.
- * <p>
- * Kept in its own class so no Curios class is resolved on an instance that only has Trinkets
- * Updated installed.
- */
+/** Curios 客户端初始化：只给原版图腾注册 3D 渲染器。单独成类，避免没装 Curios 时加载到 Curios 的类。 */
 public final class CuriosClientSetup {
 
     private CuriosClientSetup() {
