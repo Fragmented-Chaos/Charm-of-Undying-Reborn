@@ -13,6 +13,7 @@
 """
 import json
 import os
+import re
 import subprocess
 import sys
 import urllib.request
@@ -46,9 +47,20 @@ else:
 # 只审代码和资源，不审构建产物与存档
 INTERESTING = (".java", ".json", ".toml", ".gradle", ".properties", ".md", ".yml", ".yaml")
 names = [n for n in names if n.endswith(INTERESTING) and "/runs/" not in n and "build/" not in n]
-diff = "\n".join(
-    blk for blk in diff.split("\n") if not any(x in blk for x in ("/runs/", "/build/"))
-)
+
+# 按"整个文件"丢弃，不能按行丢：diff 是有结构的（每个文件一段：diff --git /
+# --- / +++ / @@ 块头 + 若干行）。按行过滤会把某个文件的 @@ 块头留下来、
+# 却删掉它上面的文件头，模型就可能把 A 文件的改动算到 B 文件头上。
+sections = re.split(r"(?m)^(?=diff --git )", diff)
+kept = []
+for sec in sections:
+    if not sec.strip():
+        continue
+    head = sec.split("\n", 1)[0]
+    if "/runs/" in head or "/build/" in head:
+        continue
+    kept.append(sec)
+diff = "".join(kept)
 
 if not names or not diff.strip():
     print("没有可审的改动")
@@ -57,8 +69,16 @@ if not names or not diff.strip():
 print(f"审查 {len(names)} 个文件，diff {len(diff)} 字符")
 truncated = False
 if len(diff) > MAX_DIFF_CHARS:
-    diff = diff[:MAX_DIFF_CHARS]
-    truncated = True
+    # 在文件边界截断，不能从中间切（半截 hunk 同样会误导模型）
+    out, used = [], 0
+    for sec in kept:
+        if used + len(sec) > MAX_DIFF_CHARS:
+            truncated = True
+            break
+        out.append(sec)
+        used += len(sec)
+    # 万一第一个文件就超限，至少别把 diff 清空（空 diff 等于没审）
+    diff = "".join(out) if out else kept[0][:MAX_DIFF_CHARS]
 
 title = os.environ.get("PR_TITLE", "(无标题)")
 body = (os.environ.get("PR_BODY", "") or "")[:2000]

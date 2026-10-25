@@ -15,6 +15,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 problems = []
+warnings = []
 notes = []
 
 
@@ -47,19 +48,20 @@ mv = P.get("mod_version", "")
 if not re.fullmatch(r"\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.\-+]+)*", mv):
     problems.append(f"mod_version 格式不规范：{mv!r}（应形如 1.1.0-alpha.2+26.3）")
 
-# ③ 版本号必须带 MC 版本后缀，且和 minecraft_version 对得上。
-#    不带后缀（例如 1.2.0）在双端模组里很危险：两端会打成同名 jar，
-#    用户装错版本时看不出来，所以这里当成错误。
-if "+" not in mv:
-    problems.append(
-        f"mod_version={mv!r} 缺少 MC 版本后缀（应形如 1.1.0+{P.get('minecraft_version')}）"
-    )
-else:
+# ③ 版本号带 MC 版本后缀时，必须和 minecraft_version 对得上。
+#    注意：不带后缀只算提示，不算错误 —— 26.1.x/26.2 维护线一直是
+#    mod_version=1.1.0-alpha.2（没有 +26.1），直接判错会让那条线立刻变红。
+if "+" in mv:
     suffix = mv.split("+", 1)[1]
     if suffix != P.get("minecraft_version"):
         problems.append(
             f"mod_version 的 +{suffix} 与 minecraft_version={P.get('minecraft_version')} 不一致"
         )
+else:
+    warnings.append(
+        f"mod_version={mv!r} 没有 MC 版本后缀（建议 {mv}+{P.get('minecraft_version')}，"
+        "免得两条线打出的 jar 同名）"
+    )
 
 # ④ mod_version 里不该出现 -SNAPSHOT / -dev（发布物才会打 tag）
 if re.search(r"snapshot|dev\b", mv, re.I):
@@ -108,6 +110,10 @@ elif mc.startswith("1.21") and jv != "21":
 print("== 元数据检查 ==")
 for n in notes:
     print(f"  · {n}")
+if warnings:
+    print(f"\n提示（{len(warnings)} 条，不阻塞）：")
+    for w in warnings:
+        print(f"  · {w}")
 if problems:
     print(f"\n发现 {len(problems)} 个问题：")
     for p in problems:

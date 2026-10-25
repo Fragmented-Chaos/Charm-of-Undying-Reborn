@@ -34,13 +34,26 @@ jobs:
     name: 构建与元数据
     runs-on: ubuntu-latest
     steps:
+      # 要完整历史：许可证头检查只针对"本次改动过的文件"，
+      # 需要 git diff base..head 才能算出改动集合。
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # JDK 版本从 gradle.properties 读，别写死：
+      # 26.x 线要 25、1.21 线要 21，写死会让另一条线的 CI 直接红。
+      - name: 读取项目要求的 JDK 版本
+        id: jdk
+        run: |
+          ver=$(grep -E '^java_version=' gradle.properties | head -1 | cut -d= -f2 | tr -d ' \r')
+          echo "version=$ver" >> "$GITHUB_OUTPUT"
+          echo "项目要求 JDK $ver"
 
       - name: 设置 JDK
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '25'
+          java-version: ${{ steps.jdk.outputs.version }}
 
       - name: 设置 Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -49,12 +62,24 @@ jobs:
         run: python3 .github/scripts/check_metadata.py
 
       - name: 代码卫生（调试输出 / TODO / 许可证头）
+        env:
+          # 不传这两个，CHANGED 集合就是空的，许可证头检查等于没跑
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: python3 .github/scripts/check_hygiene.py
 
-      - name: 构建两端
-        run: ./gradlew build --stacktrace
+      # 先记下构建起点：产物检查只认这个时间之后写出的 jar。
+      - name: 记录构建起点
+        run: date +%s > .build-start
 
-      - name: 产物检查（Fabric 与 NeoForge 都要出 jar）
+      # clean 是必须的：Gradle 判定 up-to-date 时不会重写 jar，
+      # 那样产物检查会拿旧包冒充新构建。
+      - name: 构建两端
+        run: ./gradlew clean build --stacktrace
+
+      - name: 产物检查（两端 + universal 单包）
+        env:
+          ARTIFACT_SINCE_FILE: .build-start
         run: python3 .github/scripts/check_artifacts.py
 
       - name: 汇总
@@ -68,8 +93,9 @@ jobs:
     name: AI 代码审查
     runs-on: ubuntu-latest
     needs: guard
-    # 只在 PR 上跑；没配 key 时整段跳过
-    if: github.event_name == 'pull_request'
+    # 只在 PR 上跑；没配 key 时整段跳过。
+    # 用 always()：构建失败时更要看代码逻辑，别让守卫失败顺手把 AI 审查也吞了。
+    if: always() && github.event_name == 'pull_request'
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
@@ -102,7 +128,12 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          if [ -f review.md ]; then
-            # 已有多条评论时只更新自己的那一条，避免每次 push 刷屏
-            gh pr comment "$PR_NUMBER" --body-file review.md --edit-last --create-if-none
+          [ -f review.md ] || exit 0
+          # 优先更新自己上一条评论，避免每次 push 刷屏。
+          # 不用 --create-if-none：那是 gh 2.6x 才有的参数，runner 上可能还是旧版。
+          if gh pr comment "$PR_NUMBER" --edit-last --body-file review.md 2>/dev/null; then
+            echo "已更新上一条 AI 审查评论"
+          else
+            echo "没有可更新的评论，新建一条"
+            gh pr comment "$PR_NUMBER" --body-file review.md
           fi
