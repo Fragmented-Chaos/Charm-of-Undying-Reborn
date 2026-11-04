@@ -34,8 +34,8 @@ public class TrinketsCharmSlotHelper implements ICharmSlotHelper {
             }
             return ItemStack.EMPTY;
         } catch (Exception e) {
-            Constants.LOG.warn("Error accessing Trinkets slots for player {}: {}",
-                    player.getName().getString(), e.getMessage());
+            Constants.LOG.warn("Error accessing Trinkets slots for player {}",
+                    player.getName().getString(), e);
             return ItemStack.EMPTY;
         }
     }
@@ -45,6 +45,7 @@ public class TrinketsCharmSlotHelper implements ICharmSlotHelper {
         try {
             return !TrinketsApi.getAttachment(player).getInventories().isEmpty();
         } catch (Exception e) {
+            Constants.LOG.debug("Trinkets attachment unavailable for player {}", player.getName().getString(), e);
             return false;
         }
     }
@@ -64,8 +65,8 @@ public class TrinketsCharmSlotHelper implements ICharmSlotHelper {
                 }
             }
         } catch (Exception e) {
-            Constants.LOG.warn("Error modifying Trinkets charm slot for player {}: {}",
-                    player.getName().getString(), e.getMessage());
+            Constants.LOG.warn("Error modifying Trinkets charm slot for player {}",
+                    player.getName().getString(), e);
         }
     }
 }

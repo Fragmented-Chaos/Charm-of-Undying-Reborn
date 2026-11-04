@@ -14,6 +14,9 @@ public interface ITotemEffect {
     /** 消耗图腾，默认减 1。只在 {@link #applyEffects} 成功后被调用。 */
     void modifyStack(ItemStack stack);
 
-    /** 施加复活效果，调用前生命值已被设为 1。返回 false 表示未生效，图腾不消耗。 */
+    /**
+     * 施加复活效果，调用前生命值已被设为 1；返回 false 或抛异常时调用方会还原血量，图腾不消耗。
+     * 抛异常不会冒到原版调用栈，实现方可以放心用 try/catch 包住自己的逻辑。
+     */
     boolean applyEffects(Player player, ItemStack stack);
 }

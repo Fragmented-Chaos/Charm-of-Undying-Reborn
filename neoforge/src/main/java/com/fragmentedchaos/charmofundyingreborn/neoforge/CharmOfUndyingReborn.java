@@ -15,7 +15,7 @@ import net.neoforged.fml.ModLoader;
 import net.neoforged.fml.ModLoadingIssue;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
 
 /** NeoForge 入口点。死亡处理由 CharmSlotTotemMixin 完成。 */
 @Mod(Constants.MOD_ID)
@@ -34,8 +34,9 @@ public class CharmOfUndyingReborn {
 
         CharmOfUndyingRebornCommon.init();
         eventBus.addListener(NeoForgeNetworkHelper::onRegisterPayloads);
-        // 等到服务端启动后才注册 ICurioItem：那时 DataComponents 和物品标签才都可用。
-        NeoForge.EVENT_BUS.addListener(CharmOfUndyingReborn::onServerStarted);
+        // 标签加载后再注册 ICurioItem：服务端数据加载、/reload、客户端收到标签包都会触发，
+        // 这样专用服务器的客户端和 /reload 新加进 c:totems 的物品也能右键装备。
+        NeoForge.EVENT_BUS.addListener(CharmOfUndyingReborn::onTagsUpdated);
         ChorCommand.register();
 
         Constants.LOG.info("{} successfully initialized on NeoForge", Constants.MOD_NAME);
@@ -53,7 +54,7 @@ public class CharmOfUndyingReborn {
                 .withAffectedMod(container.getModInfo()));
     }
 
-    private static void onServerStarted(ServerStartedEvent event) {
+    private static void onTagsUpdated(TagsUpdatedEvent event) {
         if (ModList.get().isLoaded(NeoForgeCharmSlotHelper.CURIOS)) {
             CuriosTotemRegistration.registerTotemCurios();
         }
