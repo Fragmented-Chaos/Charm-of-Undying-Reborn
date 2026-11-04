@@ -31,7 +31,7 @@ public final class TotemProviders {
         String id = BuiltInRegistries.ITEM.getKey(item).toString();
         ITotemEffect provider = PROVIDERS.get(id);
         if (provider != null) return Optional.of(provider);
-        if (item.builtInRegistryHolder().is(ModTags.TOTEMS)) {
+        if (BuiltInRegistries.ITEM.wrapAsHolder(item).is(ModTags.TOTEMS)) {
             return Optional.of(VANILLA);
         }
         return Optional.empty();

@@ -9,7 +9,7 @@ import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
-import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
 
 /**
@@ -19,12 +19,15 @@ import java.util.Set;
 public final class CuriosTotemRegistration {
 
     private static final ICurioItem TOTEM_CURIO_ITEM = new TotemCurioItem();
-    private static final Set<Item> REGISTERED_CURIO_ITEMS = new HashSet<>();
+    private static final Set<Item> REGISTERED_CURIO_ITEMS = ConcurrentHashMap.newKeySet();
 
     private CuriosTotemRegistration() {
     }
 
-    /** 幂等：每个物品只注册一次。 */
+    /**
+     * 幂等且线程安全。单人游戏里客户端与集成服务端都会触发 TagsUpdatedEvent，两端都需要注册
+     * （客户端靠它右键装备）。Curios 端是 synchronized Map 的 put，同一物品写同一实例，重复调用无副作用。
+     */
     public static void registerTotemCurios() {
         for (Item item : BuiltInRegistries.ITEM) {
             if (TotemHelper.isTotem(item.getDefaultInstance()) && REGISTERED_CURIO_ITEMS.add(item)) {
